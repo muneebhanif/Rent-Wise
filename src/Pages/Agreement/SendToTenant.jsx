@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-const socket = io("http://localhost:3600");
+const socket = io(import.meta.env.VITE_BACK_END_URL, { withCredentials: true });
 import { io } from "socket.io-client";
 import { createMessage, fetchMessagesByConversation } from "../../Api/Chats";
 import { createAgreement , SentAggreement } from "../../Api/Agreement";

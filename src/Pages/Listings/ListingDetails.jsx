@@ -76,6 +76,10 @@ const ListingDetails = () => {
 
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 const [selectedMedia, setSelectedMedia] = useState(null);
+  const isOwner = Boolean(
+    user?._id && currentListing?.owner?._id &&
+    String(user._id) === String(currentListing.owner._id)
+  );
 
 
   const mediaList = useMemo(() => {
@@ -231,6 +235,11 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 <Badge colorScheme="orange" px={3} py={1} fontSize="m" w={'fit-content'}>
                   Pkr{currentListing?.price}/{currentListing?.priceUnit}
                 </Badge>
+                {isOwner && (
+                  <Badge colorScheme="green" px={3} py={1} fontSize="m">
+                    Listed by you
+                  </Badge>
+                )}
                 <Flex align="center">
                   <StarRating rating={avgRating} />
                   <Text ml={1} color="gray.700" _dark={{ color: "gray.300" }}>
@@ -465,7 +474,14 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 ) : (<Text> No location shared from Owner, you can contact him/her for the location</Text> )}
             </Box>
 
-            {user?._id !== currentListing?.owner?._id && (
+            {isOwner ? (
+              <Box bg="green.50" p={6} borderRadius="lg" shadow="md" w="inherit" borderWidth="1px" borderColor="green.200">
+                <Heading as="h3" fontSize="2xl" fontWeight="semibold" color="green.800" mb={2}>
+                  Your listing
+                </Heading>
+                <Text color="green.700">This listing is listed by you.</Text>
+              </Box>
+            ) : (
               <Box
                 bg="white"
                 _dark={{ bg: "gray.800" }}

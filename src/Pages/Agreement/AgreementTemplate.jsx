@@ -29,7 +29,7 @@ import HouseAgreement from "./House/HouseAgreement";
 import CarAgreement from "./Car/CarAgreement";
 import HostelAgreement from "./Hostel/HostelAgreement";
 
-const socket = io("http://localhost:3600");
+const socket = io(import.meta.env.VITE_BACK_END_URL, { withCredentials: true });
 export default function AgreementTemplate() {
   const toast = useToast();
   

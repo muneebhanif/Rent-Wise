@@ -19,6 +19,10 @@ import { useDasboardHook } from "../hooks/DashboardUserContext"
 function MainLayout() {
   const { user } = useAuth() // handleLogout
   const {user: DashUser} = useDasboardHook();
+  const navUser = DashUser || user;
+  const navAvatar = navUser?.imageUrl?.startsWith("http")
+    ? navUser.imageUrl
+    : `${import.meta.env.VITE_BACK_END_URL}${navUser?.imageUrl || ""}`;
   const location = useLocation()
   const navigate = useNavigate()
   const {LogoutUser} = Logout()
@@ -195,7 +199,12 @@ function MainLayout() {
 
               <Menu >
                 <MenuButton>
-                <Avatar size="md" src={`${import.meta.env.VITE_BACK_END_URL}${DashUser?.imageUrl || user?.imageUrl}`} />
+                <Flex alignItems="center" gap={2}>
+                  <Avatar size="md" src={navAvatar} name={navUser?.name} />
+                  <Text color={location.pathname !== "/" ? nonHomeLinkColor : buttonTextColor} fontWeight="semibold" maxW="140px" noOfLines={1}>
+                    {navUser?.name || "Account"}
+                  </Text>
+                </Flex>
                 </MenuButton>
                 <MenuList color="gray.700">
                   <MenuGroup title="Profile">
@@ -238,7 +247,10 @@ function MainLayout() {
 
             <Menu >
                 <MenuButton>
-                  <Avatar size="md" src={`${import.meta.env.VITE_BACK_END_URL}${DashUser?.imageUrl || user?.imageUrl}`} />
+                  <Flex alignItems="center" gap={2}>
+                    <Avatar size="md" src={navAvatar} name={navUser?.name} />
+                    {user && <Text fontWeight="semibold" noOfLines={1}>{navUser?.name || "Account"}</Text>}
+                  </Flex>
                 </MenuButton>
                 <MenuList color="gray.700">
                   <MenuGroup title="Profile">
@@ -283,4 +295,3 @@ function MainLayout() {
 }
 
 export default MainLayout
-

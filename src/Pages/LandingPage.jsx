@@ -418,7 +418,7 @@ useEffect(() => {
                 >
                   {rental.images && rental.images.length > 0 ? (
                     <Image
-                      src={`http://localhost:3600${rental?.images[0]?.url}`}
+                      src={`${import.meta.env.VITE_BACK_END_URL}${rental?.images[0]?.url}`}
                       alt={rental.title}
                       w="full"
                       h={64}
