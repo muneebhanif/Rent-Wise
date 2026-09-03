@@ -1,10 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { User, login as apiLogin } from "../Api/api";
-import { io } from "socket.io-client";
-
-const socket = io(import.meta.env.VITE_BACK_END_URL, {
-  withCredentials: true,
-});
 
 
 const AuthContext = createContext();
