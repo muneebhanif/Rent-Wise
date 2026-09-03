@@ -82,7 +82,7 @@ const router = createBrowserRouter(
       {/* admin Application Routes */}
       {/* <Route element={<AdminLayout />}>
       <Route element={<ProtectedRoute requiredRole="admin" />}>
-          <Route path="/admin" element={<Home />} />
+          <Route path="/admin" element={<AdminDashboard/>} />
           <Route path="/adminDashboard" element={<AdminDashboard/>}/>
           <Route path="/adminOverview" element={<AdminOverview/>}/>
           <Route path="/admin/users" element={<AdminOverview/>}/>
@@ -93,8 +93,8 @@ const router = createBrowserRouter(
       {/* <Route element={<AdminLayout />}> */}
       <Route element={<MainLayout />}>
       <Route element={<ProtectedRoute requiredRole="admin" />}>
-          <Route path="/admin" element={<Home />} />
-          {/* <Route path="/adminDashboard" element={<AdminDashboard/>}/> */}
+          <Route path="/admin" element={<AdminDashboard/>} />
+          <Route path="/adminDashboard" element={<AdminDashboard/>}/>
           <Route path="/adminOverview" element={<AdminOverview/>}/>
           <Route path="/admin/users" element={<UserManagement/>}/>
           <Route path="/admin/listings" element={<ListingManagement/>}/>
