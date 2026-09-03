@@ -58,7 +58,7 @@ function MainLayout() {
     const fetchNotifications = async () => {
       try {
         const response = await getNotifications();
-        setNotifications(response?.data?.data);
+        setNotifications(Array.isArray(response?.data?.data) ? response.data.data : []);
       } catch (error) {
 
       }}

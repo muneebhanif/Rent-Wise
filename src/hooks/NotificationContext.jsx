@@ -15,7 +15,9 @@ export const NotificationProvider = ({ children }) => {
     const fetchNotifications = async () => {
       try {
         const response = await getNotifications();
-        const fetchedNotifications = response?.data?.data || [];
+        const fetchedNotifications = Array.isArray(response?.data?.data)
+          ? response.data.data
+          : [];
         setNotifications(fetchedNotifications);
         const count = fetchedNotifications.filter((n) => !n.isRead).length;
         setUnreadCount(count);

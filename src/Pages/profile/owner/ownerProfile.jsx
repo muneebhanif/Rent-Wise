@@ -39,7 +39,7 @@ const UserProfile = () => {
               const response = await getOwnerProfileData(_id);
               const { user, listings } = response.data.data;
               setOwner(user);
-              setListings(listings);
+              setListings(Array.isArray(listings) ? listings : []);
           } catch (error) {
               console.error("Error fetching user profile:", error);
           } finally {
@@ -121,7 +121,7 @@ const UserProfile = () => {
         try {
           const response = await getUserReviews(owner?._id);
           console.log(response)
-         setReviews(response?.data?.data?.reviews)
+         setReviews(Array.isArray(response?.data?.data?.reviews) ? response.data.data.reviews : [])
         } catch (error) {
           console.log(error);
           

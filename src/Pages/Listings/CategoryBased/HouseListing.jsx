@@ -28,7 +28,7 @@ export default function HouseListing() {
         const fetchCarListings = async()=>{
           try {
             const response = await getAllHouse();
-            setHouseData(response?.data?.data);
+            setHouseData(Array.isArray(response?.data?.data) ? response.data.data : []);
             
           } catch (error) {
             console.log(error);

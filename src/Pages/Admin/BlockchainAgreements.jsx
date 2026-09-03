@@ -35,7 +35,7 @@ export default function BlockchainAgreements() {
         const response = await getAggrementForAdminByOwnerIDs()
        
         // Transform the data to match our component's expected format
-        const formattedAgreements = response?.data?.data.map((agreement) => ({
+        const formattedAgreements = (Array.isArray(response?.data?.data) ? response.data.data : []).map((agreement) => ({
           id: agreement._id,
           title: `Agreement ${agreement._id.substring(0, 8)}...`,
           renter: agreement.renter?.name || "Unknown Renter",

@@ -33,14 +33,14 @@ export default function Notification({}) {
     toggleRead,
     setUnreadCount,
   } = useContext(NotificationContext);
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
   
 
 
   useEffect(()=>{
-    if(!notifications) return;
-    const count = notifications.filter((n) => !n.isRead).length;
+    const count = safeNotifications.filter((n) => !n.isRead).length;
      setUnreadCount(count);
-    setNotificationData(notifications)
+    setNotificationData(safeNotifications)
 
   },[notifications])
   

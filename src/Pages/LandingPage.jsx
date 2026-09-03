@@ -45,7 +45,7 @@ const LandingPage = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const { state, dispatch } = useContext(ListingsContext);
-  const { listings } = state;
+  const listings = Array.isArray(state?.listings) ? state.listings : [];
   const itemsPerPage = 6; // Number of listings per page
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(listings.length / itemsPerPage);

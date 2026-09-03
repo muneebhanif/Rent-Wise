@@ -31,7 +31,7 @@ export default function HostelListing() {
         const fetchHosteltings = async()=>{
           try {
             const response = await getAllHostel();
-            setHostelData(response?.data?.data);
+            setHostelData(Array.isArray(response?.data?.data) ? response.data.data : []);
             
           } catch (error) {
             console.log(error);

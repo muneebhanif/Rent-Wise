@@ -25,7 +25,7 @@ const [selectedStates, setSelectedStates] = useState([]);
         const fetchCarListings = async()=>{
           try {
             const response = await getAllCar();
-            setCarData(response?.data?.data);
+            setCarData(Array.isArray(response?.data?.data) ? response.data.data : []);
             
           } catch (error) {
             console.log(error);
