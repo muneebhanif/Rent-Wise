@@ -86,7 +86,10 @@ const LandingPage = () => {
     async function fetchData() {
       try {
         const response = await getAllListingAPI();
-        dispatch({ type: "GET_LISTINGS", payload: response.data });
+        const listings = Array.isArray(response.data)
+          ? response.data
+          : response.data?.data || response.data?.listings || [];
+        dispatch({ type: "GET_LISTINGS", payload: Array.isArray(listings) ? listings : [] });
       } catch (error) {
         console.error("Error fetching listings:", error);
       } finally {

@@ -8,14 +8,13 @@ export const ListingsContext = createContext();
 const listingsReducer = (state, action) => {
   switch (action.type) {
     case "GET_LISTINGS":
-     
-      return { ...state, listings: action.payload };
+      return { ...state, listings: Array.isArray(action.payload) ? action.payload : [] };
 
     case "GET_ONE_LISTING": 
       return { ...state, currentListing: action.payload };
 
       case "GET_USER_LISTINGS":
-      return { ...state, userListings: action.payload };
+      return { ...state, userListings: Array.isArray(action.payload) ? action.payload : [] };
 
     case "ADD_LISTING":
       return {
