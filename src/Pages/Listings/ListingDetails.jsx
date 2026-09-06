@@ -58,6 +58,10 @@ import BiddingSystem from "./BiddingSystem";
 import DisplayLocation from "../Location/DisplayLocation";
 
 const baseUrl = import.meta.env.VITE_BACK_END_URL;
+const mediaUrl = (url) => {
+  if (!url) return '/images/make_listing/random.png';
+  return /^https?:\/\//i.test(url) ? url : `${baseUrl}${url}`;
+};
 
 const ListingDetails = () => {
   const { id } = useParams();
@@ -290,19 +294,20 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 /> */}
                 {mediaList[currentMediaIndex]?.type === "image" ? (
   <Image
-    src={`${baseUrl}${mediaList[currentMediaIndex].url}`}
+    src={mediaUrl(mediaList[currentMediaIndex].url)}
     alt="Preview"
     objectFit="cover"
     borderRadius="lg"
     w="100%"
     h="100%"
     onClick={() => handleMediaClick(mediaList[currentMediaIndex])}
+    onError={(event) => { event.currentTarget.src = '/images/make_listing/random.png'; }}
     _hover={{ filter: "brightness(1.2)", transition: "0.2s" }}
   />
 ) : (
   <Box
     as="video"
-    src={`${baseUrl}${mediaList[currentMediaIndex].url}`}
+    src={mediaUrl(mediaList[currentMediaIndex].url)}
     controls
     borderRadius="lg"
     w="100%"
@@ -325,9 +330,9 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                     <ModalBody p={4}>
                       {/* {selectedImage && <Image src={selectedImage} borderRadius="md" />} */}
                       {selectedMedia?.type === "image" ? (
-  <Image src={`${baseUrl}${selectedMedia?.url}`} borderRadius="md" />
+  <Image src={mediaUrl(selectedMedia?.url)} borderRadius="md" onError={(event) => { event.currentTarget.src = '/images/make_listing/random.png'; }} />
 ) : (
-  <Box as="video" src={`${baseUrl}${selectedMedia?.url}`} controls autoPlay w="100%" borderRadius="md" />
+  <Box as="video" src={mediaUrl(selectedMedia?.url)} controls autoPlay w="100%" borderRadius="md" />
 )}
 
                     </ModalBody>
