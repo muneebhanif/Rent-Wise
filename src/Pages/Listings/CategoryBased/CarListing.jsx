@@ -9,6 +9,7 @@ import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-re
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
+const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function CarListing() {
   const [priceRange, setPriceRange] = useState([0, 1500000])
@@ -174,9 +175,8 @@ const [selectedStates, setSelectedStates] = useState([]);
                 {
                   car?.images?.length > 0 ? (
                     <img  src={
-                      `${import.meta.env.VITE_BACK_END_URL}${car?.images[0]?.url}` ||
-                      '/images/make_listing/random.png'
-                    } alt={car.title} className="w-full h-48 object-cover" />  
+                      mediaUrl(car?.images[0]?.url)
+                    } alt={car.title} onError={(e) => { e.currentTarget.src = '/images/make_listing/random.png'; }} className="w-full h-48 object-cover" />  
                   ) : (
                     <img  src={
                       `/images/make_listing/random.png`
