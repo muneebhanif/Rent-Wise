@@ -14,6 +14,7 @@ export const uploadMediaAPI = (formData) =>
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    withCredentials: true,
   });
 
   export const getOneUserListingAPI = (id) =>
