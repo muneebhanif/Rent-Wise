@@ -81,6 +81,7 @@ const LandingPage = () => {
   const handleScroll = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const handleFeaturedScroll = () => document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
   
   useEffect(() => {
     setCurrentPage(1);
@@ -256,7 +257,7 @@ useEffect(() => {
                     bg="orange.500"
                     _hover={{ bg: "orange.700" }}
                     transition="all 0.3s ease"
-                    onClick={handleScroll}
+                    onClick={handleFeaturedScroll}
                   >
                     View listings
                   </Button>
@@ -497,7 +498,7 @@ useEffect(() => {
 
       {/* Call to Action */}
 
-      <Box bgGradient="linear(to-r, orange.500, orange.300)">
+      <Box bgGradient="linear(to-r, orange.600, orange.400)">
         <Container
           maxW="7xl"
           px={{ base: 4, sm: 6, lg: 8 }}
@@ -509,16 +510,14 @@ useEffect(() => {
             fontWeight="extrabold"
             color="white"
           >
-            Ready to Experience Premium Rentals?
+            {user ? 'Make your next move with RentWise' : 'Ready to Experience Premium Rentals?'}
           </Heading>
           <Text mt={6} fontSize={{base:"sm",sm:"xl"}} color="orange.50" maxW="3xl" mx="auto">
-            Join RentWise today and unlock access to our exclusive selection of
-            high-end rentals. Start your journey towards unparalleled luxury and
-            convenience.
+            {user ? 'Discover new places, save your favourites, and manage every rental from one account.' : 'Join RentWise today and unlock access to our exclusive selection of high-end rentals.'}
           </Text>
           <Button
             as={Link}
-            to="/auth/signup"
+            to={user ? "/dashboard" : "/auth/signup"}
             mt={12}
             display="inline-flex"
             alignItems="center"
@@ -534,8 +533,18 @@ useEffect(() => {
             _hover={{ bg: "orange.50" }}
             transition="all 0.3s ease"
           >
-            Sign Up for Exclusive Access
+            {user ? 'Go to my dashboard' : 'Sign Up for Exclusive Access'}
           </Button>
+        </Container>
+      </Box>
+
+      <Box bg="gray.950" color="white" py={{ base: 10, md: 14 }}>
+        <Container maxW="7xl" px={{ base: 5, md: 8 }}>
+          <Grid templateColumns={{ base: '1fr', md: '2fr 1fr 1fr' }} gap={10}>
+            <Box><Heading size="md" color="orange.300">RentWise</Heading><Text mt={3} color="gray.400" maxW="sm">A simpler way to find trusted homes, cars, and stays that fit your life.</Text></Box>
+            <Stack spacing={2}><Text fontWeight="700">Explore</Text><Link to="/categories/house">Homes</Link><Link to="/categories/car">Cars</Link><Link to="/categories/hostel">Hostels</Link></Stack>
+            <Stack spacing={2}><Text fontWeight="700">Account</Text>{user ? <><Link to="/dashboard">Dashboard</Link><Link to="/profile">My profile</Link></> : <><Link to="/auth/login">Log in</Link><Link to="/auth/signup">Create account</Link></>}</Stack>
+          </Grid><Text mt={10} pt={5} borderTop="1px solid" borderColor="gray.800" color="gray.500" fontSize="sm">© {new Date().getFullYear()} RentWise. Find your next place with confidence.</Text>
         </Container>
       </Box>
 

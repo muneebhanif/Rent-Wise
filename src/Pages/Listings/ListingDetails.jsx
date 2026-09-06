@@ -212,13 +212,14 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
   return (
     <Box
       borderRadius={"10px"}
-      bg="orange.50"
+      bg="gray.50"
       _dark={{ bg: "gray.900" }}
       minH="100vh"
-      py={8}
+      py={{ base: 4, md: 8 }}
     
     >
-      <Box maxW="container.xl" mx="auto" px={4}>
+      <Box maxW="container.xl" mx="auto" px={{ base: 3, md: 4 }}>
+        <Text color="orange.600" fontSize="sm" mb={4} cursor="pointer" onClick={() => navigate(-1)}>← Back to listings</Text>
         <Grid templateColumns={{ base: "1fr", md: "2fr 1fr" }} gap={8}>
           <GridItem>
             {/* left side details of pages */}
