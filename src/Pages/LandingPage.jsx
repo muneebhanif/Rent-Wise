@@ -48,7 +48,6 @@ const LandingPage = () => {
   const listings = Array.isArray(state?.listings) ? state.listings : [];
   const itemsPerPage = 6; // Number of listings per page
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(listings.length / itemsPerPage);
   const [hasSubscription, setHasSubscription] = useState(null);
   const { notifications } = useContext(NotificationContext);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,8 +59,9 @@ const LandingPage = () => {
   const endIndex = startIndex + itemsPerPage;
  // filtering listings
   const filteredListings = listings.filter((list) =>
-    list.title.toLowerCase().includes(searchQuery.toLowerCase())
+    String(list?.title || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const totalPages = Math.max(1, Math.ceil(filteredListings.length / itemsPerPage));
 
   // setting the listings on the basis if filter 
   const paginatedListings = filteredListings.slice(startIndex, endIndex);
@@ -82,6 +82,10 @@ const LandingPage = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -415,8 +419,10 @@ useEffect(() => {
                 <GridItem
                   key={rental._id}
                   bg="white"
-                  rounded="lg"
-                  shadow="lg"
+                  rounded="2xl"
+                  shadow="0 12px 35px rgba(37, 24, 12, 0.10)"
+                  border="1px solid"
+                  borderColor="orange.100"
                   overflow="hidden"
                 >
                   {rental.images && rental.images.length > 0 ? (
@@ -424,7 +430,7 @@ useEffect(() => {
                       src={`${import.meta.env.VITE_BACK_END_URL}${rental?.images[0]?.url}`}
                       alt={rental.title}
                       w="full"
-                      h={64}
+                      h={{ base: 52, md: 64 }}
                       objectFit="cover"
                     />
                   ) : (
@@ -432,17 +438,18 @@ useEffect(() => {
                       src="images/make_listing/random.png"
                       alt={rental.title}
                       w="full"
-                      h={64}
+                      h={{ base: 52, md: 64 }}
                       objectFit="cover"
                     />
                   )}
-                  <Flex flexDir={"column"} gap={4} p={7}>
+                  <Flex flexDir={"column"} gap={4} p={{ base: 5, md: 7 }}>
+                    <Text fontSize="xs" fontWeight="800" letterSpacing="wide" color="orange.500">PREMIUM DEAL</Text>
                     <Flex justifyContent={"space-between"}>
-                      <Heading fontSize="xl" fontWeight="semibold">
-                        {rental.title}
+                      <Heading fontSize="xl" fontWeight="semibold" noOfLines={2}>
+                        {rental?.title || 'Premium rental'}
                       </Heading>
-                      <Text fontSize={"lg"} fontWeight={"bold"}>
-                        {rental.price}PKR
+                      <Text fontSize={"lg"} fontWeight={"bold"} color="orange.600" whiteSpace="nowrap" ml={3}>
+                        {(Number(rental?.price) || 0).toLocaleString()} PKR
                       </Text>
                     </Flex>
 

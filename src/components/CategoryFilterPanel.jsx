@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Badge, Box, Button, Checkbox, Collapse, Flex, Heading, Input,
   SimpleGrid, Slider, SliderFilledTrack, SliderThumb, SliderTrack,
@@ -29,9 +29,11 @@ export default function CategoryFilterPanel({
   bedrooms, setBedrooms, bathrooms, setBathrooms, amenity, setAmenity,
   amenitiesList = [], showRooms = false, onReset,
 }) {
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationMessage, setLocationMessage] = useState('');
   const activeCount = (minPrice > 0 ? 1 : 0) + (maxPrice < priceMax ? 1 : 0)
-    + selectedCities.length + selectedStates.length + (bedrooms || 0 > 0 ? 1 : 0)
-    + (bathrooms || 0 > 0 ? 1 : 0) + amenity.length;
+    + selectedCities.length + selectedStates.length + (Number(bedrooms) > 0 ? 1 : 0)
+    + (Number(bathrooms) > 0 ? 1 : 0) + amenity.length;
   const safeMax = Math.max(Number(priceMax) || 1, 1);
   return <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="2xl" p={{ base: 4, md: 5 }} boxShadow="sm" position={{ lg: 'sticky' }} top="5">
     <Flex justify="space-between" align="start" mb={1}>
@@ -51,8 +53,14 @@ export default function CategoryFilterPanel({
         <SimpleGrid columns={2} gap={2}><Input type="number" min={0} value={bedrooms} onChange={e => setBedrooms(Number(e.target.value) || 0)} placeholder="Min bedrooms" aria-label="Minimum bedrooms" /><Input type="number" min={0} value={bathrooms} onChange={e => setBathrooms(Number(e.target.value) || 0)} placeholder="Min bathrooms" aria-label="Minimum bathrooms" /></SimpleGrid>
       </Section>}
       {amenitiesList.length > 0 && <Section title="Amenities" count={amenity.length}><SimpleGrid columns={{ base: 2, md: 1 }} spacing={2}>{amenitiesList.map(item => <Checkbox key={item} colorScheme="orange" isChecked={amenity.includes(item)} onChange={e => toggle(setAmenity, item, e.target.checked)}>{item}</Checkbox>)}</SimpleGrid></Section>}
-      <Section title="City" count={selectedCities.length}><SimpleGrid columns={{ base: 2, md: 1 }} spacing={2}>{CITIES.map(city => <Checkbox key={city} colorScheme="orange" isChecked={selectedCities.includes(city)} onChange={e => toggle(setSelectedCities, city, e.target.checked)}>{city}</Checkbox>)}</SimpleGrid></Section>
-      <Section title="Province" count={selectedStates.length}><Stack spacing={2}>{STATES.map(state => <Checkbox key={state} colorScheme="orange" isChecked={selectedStates.includes(state)} onChange={e => toggle(setSelectedStates, state, e.target.checked)}>{state}</Checkbox>)}</Stack></Section>
+      <Section title="Location" count={selectedCities.length + selectedStates.length}>
+        <Flex gap={2} mb={2}><Input size="sm" value={locationSearch} onChange={e => setLocationSearch(e.target.value)} placeholder="Search city or province" aria-label="Search location" />
+          <Button size="sm" colorScheme="orange" variant="outline" onClick={() => { if (!navigator.geolocation) { setLocationMessage('Location is not supported'); return; } setLocationMessage('Finding your location…'); navigator.geolocation.getCurrentPosition(async ({ coords }) => { try { const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}`); const address = (await response.json())?.address || {}; const city = address.city || address.town || address.village; const state = address.state; if (city && CITIES.some(item => item.toLowerCase() === city.toLowerCase())) setSelectedCities([CITIES.find(item => item.toLowerCase() === city.toLowerCase())]); if (state && STATES.some(item => item.toLowerCase() === state.toLowerCase())) setSelectedStates([STATES.find(item => item.toLowerCase() === state.toLowerCase())]); setLocationSearch(city || state || ''); setLocationMessage(`Showing results near ${city || state || 'your location'}`); } catch { setLocationMessage('Could not identify your city; choose it below'); } }, () => setLocationMessage('Allow location access or choose a location manually')); }} title="Use current location">⌖</Button></Flex>
+        {locationMessage && <Text fontSize="xs" color="gray.500" mb={2}>{locationMessage}</Text>}
+        <Text fontSize="xs" fontWeight="700" color="gray.500" mb={1}>Cities</Text>
+        <SimpleGrid columns={{ base: 2, md: 1 }} spacing={2}>{CITIES.filter(item => item.toLowerCase().includes(locationSearch.toLowerCase())).map(city => <Checkbox key={city} colorScheme="orange" isChecked={selectedCities.includes(city)} onChange={e => toggle(setSelectedCities, city, e.target.checked)}>{city}</Checkbox>)}</SimpleGrid>
+      </Section>
+      <Section title="Province" count={selectedStates.length}><Stack spacing={2}>{STATES.filter(item => item.toLowerCase().includes(locationSearch.toLowerCase())).map(state => <Checkbox key={state} colorScheme="orange" isChecked={selectedStates.includes(state)} onChange={e => toggle(setSelectedStates, state, e.target.checked)}>{state}</Checkbox>)}</Stack></Section>
     </Stack>
   </Box>;
 }
