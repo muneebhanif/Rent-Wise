@@ -4,6 +4,7 @@ import { Box, Card, CardFooter, CardHeader, Heading, Input,Button, Flex, Text, S
 import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-react';
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
+import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
 
 export default function HouseListing() {
   const [priceRange, setPriceRange] = useState([0, 1500000])
@@ -67,7 +68,7 @@ export default function HouseListing() {
         house?.facilities?.bedrooms >= bedrooms &&
         house?.facilities?.bathrooms >= bathrooms &&
         amenity.every((selectedAmenity) => // every returns boolean, if all conditions are true, it returns true, if any is false it returns false
-          house?.amenities
+            (Array.isArray(house?.amenities) ? house.amenities : [])
             ?.map((a) => a.toLowerCase())
             .includes(selectedAmenity.toLowerCase())
         )&&
@@ -83,6 +84,9 @@ export default function HouseListing() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4">
+          <CategoryFilterPanel resultCount={filteredListings.length} priceMax={10000000} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} selectedCities={selectedCities} setSelectedCities={setSelectedCities} selectedStates={selectedStates} setSelectedStates={setSelectedStates} bedrooms={bedrooms} setBedrooms={setBedrooms} bathrooms={bathrooms} setBathrooms={setBathrooms} amenity={amenity} setAmenity={setAmenity} amenitiesList={amenitiesList} showRooms onReset={() => { setMinPrice(0); setMaxPrice(10000000); setBedrooms(0); setBathrooms(0); setAmenity([]); setSelectedCities([]); setSelectedStates([]); }} />
+        </div>
+        <div className="hidden">
           <Card  border={'1px solid #E0E0E0'}>
             {/* <CardHeader className="bg-orange-500 text-white">
               <Heading>Find Your Perfect House</Heading>
@@ -223,7 +227,7 @@ export default function HouseListing() {
             {filteredListings.map(house => (
               <Card key={house._id} className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 bg-white">
                 {
-                  house?.images.length > 0 ? (
+                  house?.images?.length > 0 ? (
                     <img  src={
                       `${import.meta.env.VITE_BACK_END_URL}${house?.images[0]?.url}` ||
                       '/images/make_listing/random.png'
@@ -237,7 +241,7 @@ export default function HouseListing() {
                 <Box px={2}>
                 <Heading py={2} fontSize={'20px'} fontWeight={'semibold'}>{house.title}</Heading>
                   <Flex gap={1} alignItems={'baseline'}>
-                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{house.price.toLocaleString()} PKR</span>
+                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{(Number(house.price) || 0).toLocaleString()} PKR</span>
                     <span className="text-gray-600">/{house.priceUnit}</span>
                   </Flex>
                   

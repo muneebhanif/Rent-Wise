@@ -8,6 +8,7 @@ import { Box, Card, CardFooter, CardHeader, Heading,
 import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-react';
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
+import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
 
 export default function CarListing() {
   const [priceRange, setPriceRange] = useState([0, 1500000])
@@ -50,7 +51,7 @@ const [selectedStates, setSelectedStates] = useState([]);
     };
 
     const filteredListings = carData.filter((car) => {
-      const matchesPrice = car.price >= minPrice && car.price <= maxPrice;
+      const matchesPrice = (Number(car?.price) || 0) >= minPrice && (Number(car?.price) || 0) <= maxPrice;
       const matchesCity = selectedCities.length > 0 ? selectedCities.includes(car.location?.city) : true;
       const matchesState = selectedStates.length > 0 ? selectedStates.includes(car.location?.state) : true;
       return matchesPrice && matchesCity && matchesState;
@@ -65,6 +66,9 @@ const [selectedStates, setSelectedStates] = useState([]);
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4">
+          <CategoryFilterPanel resultCount={filteredListings.length} priceMax={10000000} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} selectedCities={selectedCities} setSelectedCities={setSelectedCities} selectedStates={selectedStates} setSelectedStates={setSelectedStates} amenity={[]} setAmenity={() => {}} onReset={() => { setMinPrice(0); setMaxPrice(10000000); setSelectedCities([]); setSelectedStates([]); }} />
+        </div>
+        <div className="hidden">
           <Card boxShadow={'lg'}>
             {/* <CardHeader className="bg-orange-500 text-white">
               <Heading>Find Your Perfect Car</Heading>
@@ -168,7 +172,7 @@ const [selectedStates, setSelectedStates] = useState([]);
             {filteredListings.map(car => (
               <Card key={car._id} className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 bg-white">
                 {
-                  car?.images.length > 0 ? (
+                  car?.images?.length > 0 ? (
                     <img  src={
                       `${import.meta.env.VITE_BACK_END_URL}${car?.images[0]?.url}` ||
                       '/images/make_listing/random.png'
@@ -182,7 +186,7 @@ const [selectedStates, setSelectedStates] = useState([]);
                 <Box px={2}>
                  <Heading py={2} fontSize={'20px'} fontWeight={'semibold'}>{car.title}</Heading>
                   <Flex gap={1} alignItems={'baseline'}>
-                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{car.price.toLocaleString()} PKR</span>
+                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{(Number(car.price) || 0).toLocaleString()} PKR</span>
                     <span className="text-gray-600">/{car.priceUnit}</span>
                     </Flex>
                   <p className="text-gray-600 flex items-center">
