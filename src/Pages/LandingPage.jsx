@@ -51,6 +51,9 @@ const LandingPage = () => {
   const [hasSubscription, setHasSubscription] = useState(null);
   const { notifications } = useContext(NotificationContext);
   const [searchQuery, setSearchQuery] = useState("");
+  const mediaUrl = (url) => url && /^https?:\/\//i.test(url)
+    ? url
+    : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : "/images/make_listing/random.png";
   
 
 
@@ -428,15 +431,16 @@ useEffect(() => {
                 >
                   {rental.images && rental.images.length > 0 ? (
                     <Image
-                      src={`${import.meta.env.VITE_BACK_END_URL}${rental?.images[0]?.url}`}
+                      src={mediaUrl(rental?.images[0]?.url)}
                       alt={rental.title}
+                      onError={(event) => { event.currentTarget.src = "/images/make_listing/random.png"; }}
                       w="full"
                       h={{ base: 52, md: 64 }}
                       objectFit="cover"
                     />
                   ) : (
                     <Image
-                      src="images/make_listing/random.png"
+                      src="/images/make_listing/random.png"
                       alt={rental.title}
                       w="full"
                       h={{ base: 52, md: 64 }}
