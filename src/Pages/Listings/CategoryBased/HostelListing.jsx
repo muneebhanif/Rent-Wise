@@ -74,11 +74,16 @@ export default function HostelListing() {
       amenity.every((selectedAmenity) =>
         (Array.isArray(hostel?.amenities) ? hostel.amenities : [])
           .filter(item => typeof item === 'string')
+          .flatMap(item => item.split(','))
           .some(item => item.trim().toLowerCase() === String(selectedAmenity).trim().toLowerCase())
       ) &&
       (selectedCities.length > 0 ? selectedCities.includes(hostel?.location?.city) : true) &&
       (selectedStates.length > 0 ? selectedStates.includes(hostel?.location?.state) : true)
     );
+    const availableAmenities = [...new Set([
+      ...amenitiesList,
+      ...hostelData.flatMap(item => (Array.isArray(item?.amenities) ? item.amenities : []).flatMap(value => typeof value === 'string' ? value.split(',').map(part => part.trim()).filter(Boolean) : [])),
+    ])];
     
 
 
@@ -89,7 +94,7 @@ export default function HostelListing() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar with filters */}
         <div className="w-full lg:w-1/4">
-          <CategoryFilterPanel resultCount={filteredListings.length} priceMax={10000000} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} selectedCities={selectedCities} setSelectedCities={setSelectedCities} selectedStates={selectedStates} setSelectedStates={setSelectedStates} bedrooms={bedrooms} setBedrooms={setBedrooms} bathrooms={bathrooms} setBathrooms={setBathrooms} amenity={amenity} setAmenity={setAmenity} amenitiesList={amenitiesList} showRooms onReset={() => { setMinPrice(0); setMaxPrice(10000000); setBedrooms(0); setBathrooms(0); setAmenity([]); setSelectedCities([]); setSelectedStates([]); }} />
+          <CategoryFilterPanel resultCount={filteredListings.length} priceMax={10000000} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} selectedCities={selectedCities} setSelectedCities={setSelectedCities} selectedStates={selectedStates} setSelectedStates={setSelectedStates} bedrooms={bedrooms} setBedrooms={setBedrooms} bathrooms={bathrooms} setBathrooms={setBathrooms} amenity={amenity} setAmenity={setAmenity} amenitiesList={availableAmenities} showRooms onReset={() => { setMinPrice(0); setMaxPrice(10000000); setBedrooms(0); setBathrooms(0); setAmenity([]); setSelectedCities([]); setSelectedStates([]); }} />
         </div>
         <div className="hidden">
           <Card  border={'1px solid #E0E0E0'}>
