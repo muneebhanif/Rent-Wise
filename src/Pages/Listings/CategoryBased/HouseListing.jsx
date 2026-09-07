@@ -68,11 +68,11 @@ export default function HouseListing() {
         house.price <= maxPrice &&
         house?.facilities?.bedrooms >= bedrooms &&
         house?.facilities?.bathrooms >= bathrooms &&
-        amenity.every((selectedAmenity) => // every returns boolean, if all conditions are true, it returns true, if any is false it returns false
-            (Array.isArray(house?.amenities) ? house.amenities : [])
-            ?.map((a) => a.toLowerCase())
-            .includes(selectedAmenity.toLowerCase())
-        )&&
+        amenity.every((selectedAmenity) =>
+          (Array.isArray(house?.amenities) ? house.amenities : [])
+            .filter(item => typeof item === 'string')
+            .some(item => item.trim().toLowerCase() === String(selectedAmenity).trim().toLowerCase())
+        ) &&
       (selectedCities.length > 0 ? selectedCities.includes(house?.location?.city) : true) &&
       (selectedStates.length > 0 ? selectedStates.includes(house?.location?.state) : true)
     );

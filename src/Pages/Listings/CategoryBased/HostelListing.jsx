@@ -73,8 +73,8 @@ export default function HostelListing() {
       hostel?.facilities?.bathrooms >= bathrooms &&
       amenity.every((selectedAmenity) =>
         (Array.isArray(hostel?.amenities) ? hostel.amenities : [])
-          ?.map((a) => a.toLowerCase())
-          .includes(selectedAmenity.toLowerCase())
+          .filter(item => typeof item === 'string')
+          .some(item => item.trim().toLowerCase() === String(selectedAmenity).trim().toLowerCase())
       ) &&
       (selectedCities.length > 0 ? selectedCities.includes(hostel?.location?.city) : true) &&
       (selectedStates.length > 0 ? selectedStates.includes(hostel?.location?.state) : true)
