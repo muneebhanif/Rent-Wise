@@ -5,9 +5,11 @@ import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-re
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
+import { useAuth } from '../../../hooks/AuthContext';
 const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function HouseListing() {
+  const { user } = useAuth();
   const [priceRange, setPriceRange] = useState([0, 1500000])
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000000);
@@ -63,8 +65,10 @@ export default function HouseListing() {
     };
 
   const filteredListings = houseData.filter(
-      (house) =>
-        house.price >= minPrice &&
+      (house) => {
+        const ownerId = house?.owner?._id || house?.owner;
+        if (user?._id && ownerId && String(ownerId) === String(user._id)) return false;
+        return house.price >= minPrice &&
         house.price <= maxPrice &&
         house?.facilities?.bedrooms >= bedrooms &&
         house?.facilities?.bathrooms >= bathrooms &&
@@ -76,7 +80,7 @@ export default function HouseListing() {
         ) &&
       (selectedCities.length > 0 ? selectedCities.includes(house?.location?.city) : true) &&
       (selectedStates.length > 0 ? selectedStates.includes(house?.location?.state) : true)
-    );
+    });
     const availableAmenities = [...new Set([
       ...amenitiesList,
       ...houseData.flatMap(item => (Array.isArray(item?.amenities) ? item.amenities : []).flatMap(value => typeof value === 'string' ? value.split(',').map(part => part.trim()).filter(Boolean) : [])),

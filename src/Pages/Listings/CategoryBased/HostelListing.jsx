@@ -8,9 +8,11 @@ import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-re
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
+import { useAuth } from '../../../hooks/AuthContext';
 const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function HostelListing() {
+  const { user } = useAuth();
   const [priceRange, setPriceRange] = useState([0, 1500000])
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000000);
@@ -66,8 +68,10 @@ export default function HostelListing() {
       );
     };
 
-    const filteredListings = hostelData.filter((hostel) => 
-      hostel.price >= minPrice &&
+    const filteredListings = hostelData.filter((hostel) => {
+      const ownerId = hostel?.owner?._id || hostel?.owner;
+      if (user?._id && ownerId && String(ownerId) === String(user._id)) return false;
+      return hostel.price >= minPrice &&
       hostel.price <= maxPrice &&
       hostel?.facilities?.bedrooms >= bedrooms &&
       hostel?.facilities?.bathrooms >= bathrooms &&
@@ -79,7 +83,7 @@ export default function HostelListing() {
       ) &&
       (selectedCities.length > 0 ? selectedCities.includes(hostel?.location?.city) : true) &&
       (selectedStates.length > 0 ? selectedStates.includes(hostel?.location?.state) : true)
-    );
+    });
     const availableAmenities = [...new Set([
       ...amenitiesList,
       ...hostelData.flatMap(item => (Array.isArray(item?.amenities) ? item.amenities : []).flatMap(value => typeof value === 'string' ? value.split(',').map(part => part.trim()).filter(Boolean) : [])),

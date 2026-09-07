@@ -45,7 +45,11 @@ const LandingPage = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const { state, dispatch } = useContext(ListingsContext);
-  const listings = Array.isArray(state?.listings) ? state.listings : [];
+  const listings = (Array.isArray(state?.listings) ? state.listings : []).filter(listing => {
+    const ownerId = listing?.owner?._id || listing?.owner;
+    const currentUserId = user?._id || user?.id;
+    return !currentUserId || !ownerId || String(ownerId) !== String(currentUserId);
+  });
   const itemsPerPage = 6; // Number of listings per page
   const [currentPage, setCurrentPage] = useState(1);
   const [hasSubscription, setHasSubscription] = useState(null);

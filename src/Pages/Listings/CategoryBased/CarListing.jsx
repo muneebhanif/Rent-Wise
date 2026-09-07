@@ -9,9 +9,11 @@ import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-re
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
+import { useAuth } from '../../../hooks/AuthContext';
 const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function CarListing() {
+  const { user } = useAuth();
   const [priceRange, setPriceRange] = useState([0, 1500000])
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000000);
@@ -52,6 +54,8 @@ const [selectedStates, setSelectedStates] = useState([]);
     };
 
     const filteredListings = carData.filter((car) => {
+      const ownerId = car?.owner?._id || car?.owner;
+      if (user?._id && ownerId && String(ownerId) === String(user._id)) return false;
       const matchesPrice = (Number(car?.price) || 0) >= minPrice && (Number(car?.price) || 0) <= maxPrice;
       const matchesCity = selectedCities.length > 0 ? selectedCities.includes(car.location?.city) : true;
       const matchesState = selectedStates.length > 0 ? selectedStates.includes(car.location?.state) : true;
