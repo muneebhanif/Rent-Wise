@@ -231,7 +231,7 @@ useEffect(() => {
 
             <Flex mt={10} justifyContent="center" className="animate-fade-in-up animation-delay-600">
               <Box rounded="md" shadow="md">
-                <Link to="#search" _hover={{ textDecoration: "none" }}>
+                <Link to={user ? "/dashboard" : "/auth/signup"} _hover={{ textDecoration: "none" }}>
                   <Button
                   
                     px={{ base: 2, md: 10 }}
@@ -243,9 +243,8 @@ useEffect(() => {
                     bg="white"
                     _hover={{ bg: "gray.50" }}
                     transition="all 0.3s ease"
-                    onClick={handleScroll}
                   >
-                    Get started
+                    {user ? 'Open dashboard' : 'Get started'}
                   </Button>
                 </Link>
               </Box>
