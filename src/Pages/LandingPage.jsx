@@ -217,7 +217,7 @@ useEffect(() => {
 
 
             <Text mt={3} maxW={{ base: "md", md: "3xl" }} mx="auto" fontSize={{ base: "sm", md: "2xl" }} color="white">
-  Discover premium rentals for{' '}
+  Find a rental for{' '}
   <span className="category-text">
     <Text as="span" color="yellow.300">
       {displayText}
@@ -290,7 +290,7 @@ useEffect(() => {
             Find Your Perfect Rental
           </Heading>
           <Text mt={4} fontSize={{base:"sm",sm:"xl"}} color="gray.600">
-            Search through our extensive selection of premium rentals
+            Search homes, cars, and stays in one place
           </Text>
         </Box>
         <Flex mt={8} justifyContent="center">
@@ -337,7 +337,7 @@ useEffect(() => {
             color="gray.900"
             textAlign="center"
           >
-            Explore Our Premium Categories
+            Explore Categories
           </Heading>
           <Grid
             mt={20}
@@ -397,7 +397,7 @@ useEffect(() => {
             color="gray.900"
             textAlign="center"
           >
-            Featured Premium Rentals
+            Latest Listings
           </Heading>
           <Text
             my={4}
@@ -405,7 +405,7 @@ useEffect(() => {
             color={"gray.600"}
             textAlign={"center"}
           >
-            Experience luxury with our top-tier rental selections
+            Find a place, vehicle, or stay that works for you
           </Text>
           <Grid
             mt={20}
@@ -448,10 +448,10 @@ useEffect(() => {
                     />
                   )}
                   <Flex flexDir={"column"} gap={4} p={{ base: 5, md: 7 }}>
-                    <Text fontSize="xs" fontWeight="800" letterSpacing="wide" color="orange.500">PREMIUM DEAL</Text>
+                    <Text fontSize="xs" fontWeight="800" letterSpacing="wide" color="orange.500">LISTING</Text>
                     <Flex justifyContent={"space-between"}>
                       <Heading fontSize="xl" fontWeight="semibold" noOfLines={2}>
-                        {rental?.title || 'Premium rental'}
+                        {rental?.title || 'Rental listing'}
                       </Heading>
                       <Text fontSize={"lg"} fontWeight={"bold"} color="orange.600" whiteSpace="nowrap" ml={3}>
                         {(Number(rental?.price) || 0).toLocaleString()} PKR
@@ -514,7 +514,7 @@ useEffect(() => {
             fontWeight="extrabold"
             color="white"
           >
-            {user ? 'Make your next move with RentWise' : 'Ready to Experience Premium Rentals?'}
+            {user ? 'Make your next move with RentWise' : 'Ready to find your next rental?'}
           </Heading>
           <Text mt={6} fontSize={{base:"sm",sm:"xl"}} color="orange.50" maxW="3xl" mx="auto">
             {user ? 'Discover new places, save your favourites, and manage every rental from one account.' : 'Join RentWise today and unlock access to our exclusive selection of high-end rentals.'}

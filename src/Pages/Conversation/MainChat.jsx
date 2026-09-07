@@ -66,6 +66,21 @@ export default function MainChat() {
     }
   }, [Messages]);
 
+  // Open the owner conversation immediately when arriving from a listing.
+  useEffect(() => {
+    if (!ownerIdDetails?._id || !allData) return;
+    const conversation = allData.find(item =>
+      item.participants?.some(participant => String(participant._id) === String(ownerIdDetails._id))
+    );
+    setOwner(ownerIdDetails);
+    setItem(ownerIdDetails.name || 'Owner');
+    setListings(conversation?.listing || []);
+    setConvoId(conversation?._id || '');
+    setIsCLicked(true);
+    setCheckClick(true);
+    setShowPopOver(true);
+  }, [ownerIdDetails, allData]);
+
   const handleSideBarClick = (
     receiver_id,
     receiver_name,
