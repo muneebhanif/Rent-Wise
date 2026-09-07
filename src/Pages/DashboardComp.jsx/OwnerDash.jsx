@@ -35,6 +35,7 @@ import {
 import { Link } from "react-router-dom";
 import { ListingsContext } from "../../hooks/ListingsContext";
 import { GetAggreements } from "../../Api/Agreement";
+const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : "/images/make_listing/random.png";
 // import UserPopover from "./UserPopover";
 // import UpdateAgreement from "../Agreement/UpdateAgreement";
 
@@ -256,7 +257,23 @@ export default function OwnerDash() {
               </Heading>
             </CardHeader>
             <CardBody p={{ base: 2, sm: 3, md: 4 }}>
-              <TableContainer overflowX="auto" >
+              <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={4}>
+                {decideListingNumber?.map((listing) => (
+                  <Card key={listing._id} overflow="hidden" border="1px solid" borderColor="gray.200" shadow="sm">
+                    <Box h={{ base: "170px", md: "190px" }} bg="gray.100">
+                      <img src={mediaUrl(listing?.images?.[0]?.url)} alt={listing.title} onError={(event) => { event.currentTarget.src = "/images/make_listing/random.png"; }} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    </Box>
+                    <CardBody p={4}>
+                      <Text fontSize="xs" textTransform="uppercase" color="orange.500" fontWeight="bold">{listing.category || "Listing"}</Text>
+                      <Heading size="sm" mt={1} noOfLines={2}>{listing.title || "Untitled listing"}</Heading>
+                      <Text mt={2} color="orange.600" fontWeight="bold">{(Number(listing.price) || 0).toLocaleString()} PKR <Text as="span" color="gray.500" fontWeight="normal">/{listing.priceUnit || "period"}</Text></Text>
+                      <Text mt={2} fontSize="sm" color="gray.500" noOfLines={1}>{listing.location?.city || listing.location?.state || "Location unavailable"}</Text>
+                      <Flex mt={3} justify="space-between" align="center"><Text fontSize="xs" color={listing.listingStatus === "active" ? "green.600" : "gray.500"}>{listing.listingStatus || "active"}</Text><Button as={Link} to={`/listings/${listing._id}`} size="sm" colorScheme="orange" leftIcon={<Edit size={14} />}>Manage</Button></Flex>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+              <TableContainer overflowX="auto" display="none" >
                 <Table variant="simple" size={{ base: "sm", md: "md" }}>
                   <Thead>
                     <Tr>
