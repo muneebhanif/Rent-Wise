@@ -180,7 +180,7 @@ export default function LiveChat({
         {
           // sending data to agreement
           owner && showPopOver && (
-            <UserPopover convoID={convoID} tenant={owner} />
+            <UserPopover convoID={convoID} tenant={owner} listings={listings} />
           )
         }
       </HStack>

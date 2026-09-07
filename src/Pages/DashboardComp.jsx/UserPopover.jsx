@@ -20,7 +20,7 @@ import AgreementTemplate from "../Agreement/AgreementTemplate";
 import { useNavigate } from "react-router-dom";
 import { ListingsContext } from "../../hooks/ListingsContext";
 
-export default function UserPopover({tenant,convoID}) {
+export default function UserPopover({tenant,convoID,listings = []}) {
   // const [participantsDetail, setParticipantsDetail] = useState([]);
    const { state } = useContext(ListingsContext);
     const { userListings } = state;
@@ -47,7 +47,7 @@ export default function UserPopover({tenant,convoID}) {
     <>
     
      {
-      userListings.length > 0 ? (
+      userListings.filter(item => listings.some(listing => String(listing?._id || listing) === String(item?._id))).length > 0 ? (
         <Popover>
         <PopoverTrigger>
           <Flex gap={3} alignItems={"center"}>
@@ -98,8 +98,9 @@ export default function UserPopover({tenant,convoID}) {
                 ))
               )} */}
 
-            {userListings.length > 0 &&
-                userListings.map((p, pIndex) => (
+            {userListings
+              .filter(item => listings.some(listing => String(listing?._id || listing) === String(item?._id)))
+              .map((p, pIndex) => (
                   <Flex
                   onClick={()=> handleClick(p._id, p.title, p.category)}
                 
