@@ -22,8 +22,9 @@ import { ListingsContext } from "../../hooks/ListingsContext";
 
 export default function UserPopover({tenant,convoID,listings = []}) {
   // const [participantsDetail, setParticipantsDetail] = useState([]);
-   const { state } = useContext(ListingsContext);
-    const { userListings } = state;
+  const { state } = useContext(ListingsContext);
+  const { userListings } = state;
+  const conversationListings = Array.isArray(listings) ? listings.filter(item => item?._id || typeof item === 'string') : [];
 
 
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function UserPopover({tenant,convoID,listings = []}) {
     <>
     
      {
-      userListings.filter(item => listings.some(listing => String(listing?._id || listing) === String(item?._id))).length > 0 ? (
+      conversationListings.length > 0 ? (
         <Popover>
         <PopoverTrigger>
           <Flex gap={3} alignItems={"center"}>
@@ -98,9 +99,7 @@ export default function UserPopover({tenant,convoID,listings = []}) {
                 ))
               )} */}
 
-            {userListings
-              .filter(item => listings.some(listing => String(listing?._id || listing) === String(item?._id)))
-              .map((p, pIndex) => (
+            {conversationListings.map((p, pIndex) => (
                   <Flex
                   onClick={()=> handleClick(p._id, p.title, p.category)}
                 

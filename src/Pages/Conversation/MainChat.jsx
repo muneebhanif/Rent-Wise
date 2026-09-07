@@ -74,7 +74,11 @@ export default function MainChat() {
     );
     setOwner(ownerIdDetails);
     setItem(ownerIdDetails.name || 'Owner');
-    setListings(conversation?.listing || []);
+    const conversationListings = conversation?.listing || [];
+    const requestedId = listingIdDetails?._id || listingIdDetails;
+    setListings(requestedId
+      ? conversationListings.filter(listing => String(listing?._id || listing) === String(requestedId))
+      : conversationListings);
     setConvoId(conversation?._id || '');
     setIsCLicked(true);
     setCheckClick(true);
