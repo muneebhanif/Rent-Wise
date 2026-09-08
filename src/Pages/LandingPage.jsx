@@ -236,7 +236,7 @@ useEffect(() => {
 
             <Flex mt={10} justifyContent="center" className="animate-fade-in-up animation-delay-600">
               <Box rounded="md" shadow="md">
-                <Link to={user ? "/dashboard" : "/auth/signup"} _hover={{ textDecoration: "none" }}>
+                <Link to={user ? "#featured" : "/auth/signup"} _hover={{ textDecoration: "none" }}>
                   <Button
                   
                     px={{ base: 2, md: 10 }}
@@ -249,7 +249,7 @@ useEffect(() => {
                     _hover={{ bg: "gray.50" }}
                     transition="all 0.3s ease"
                   >
-                    {user ? 'Open dashboard' : 'Get started'}
+                    {user ? 'Explore rentals' : 'Get started'}
                   </Button>
                 </Link>
               </Box>
@@ -525,7 +525,7 @@ useEffect(() => {
           </Text>
           <Button
             as={Link}
-            to={user ? "/dashboard" : "/auth/signup"}
+            to={user ? "#featured" : "/auth/signup"}
             mt={12}
             display="inline-flex"
             alignItems="center"
@@ -541,7 +541,7 @@ useEffect(() => {
             _hover={{ bg: "orange.50" }}
             transition="all 0.3s ease"
           >
-            {user ? 'Go to my dashboard' : 'Sign Up for Exclusive Access'}
+            {user ? 'Browse all rentals' : 'Sign Up for Exclusive Access'}
           </Button>
         </Container>
       </Box>
