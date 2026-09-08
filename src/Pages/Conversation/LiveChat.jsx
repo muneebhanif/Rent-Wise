@@ -100,8 +100,10 @@ export default function LiveChat({
 
       const response = await createMessage(data);
 
-      if (response) {
-        setConvoId(response.data.data.conversation);
+      if (response?.data?.data) {
+        const sentMessage = response.data.data;
+        setMessages((previous) => [...previous, sentMessage]);
+        setConvoId(sentMessage.conversation);
       }
       
        
@@ -125,6 +127,10 @@ export default function LiveChat({
     };
 
     fetchMessages();
+    // Poll the active conversation because persistent WebSockets are not
+    // guaranteed when the API is hosted as a Vercel serverless function.
+    const poll = window.setInterval(fetchMessages, 3000);
+    return () => window.clearInterval(poll);
   }, [convoID, owner, isCLicked]);
 
   return (

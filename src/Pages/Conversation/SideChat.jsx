@@ -26,6 +26,7 @@ export default function   SideChat({ handleSideBarClick, ownerIdDetails, setAllD
     const fetchParticipants = async () => {
         try {
             const response = await fetchConversationsForSidebar();
+            if (!response?.data?.data) return;
             setAllData(response.data.data);
             
             const participantData = response?.data?.data.flatMap(item => 
@@ -39,7 +40,11 @@ export default function   SideChat({ handleSideBarClick, ownerIdDetails, setAllD
     };
     fetchParticipants();
 
-    
+    // Socket.IO is best-effort on Vercel serverless deployments. Refresh the
+    // sidebar from the API so new messages/conversations still appear.
+    const poll = window.setInterval(fetchParticipants, 5000);
+
+    return () => window.clearInterval(poll);
 }, []);
 
     
@@ -69,8 +74,9 @@ if (participantData !== undefined) {
 
 
 useEffect(() => {
-  socket.on("receiveMessage", (data) => {
+  const updateUnreadConversation = (data) => {
     setAllData(prevData => {
+      if (!Array.isArray(prevData)) return prevData;
       return prevData.map(conv => {
         const conversationId = data.conversationId || data.conversationID;
         const receiverId = data.receiver?._id || data.receiver;
@@ -83,12 +89,30 @@ useEffect(() => {
         return conv;
       });
     });
-  });
+  };
+
+  const addNewConversation = (data) => {
+    if (!data?.conversation) return;
+    setAllData((previous) => {
+      if (!Array.isArray(previous) || previous.some((item) => item._id === data.conversation._id)) {
+        return previous;
+      }
+      return [...previous, { ...data.conversation, unreadMessagesCount: data.unreadCount || 1 }];
+    });
+  };
+
+  socket.on("connect", () => user?._id && socket.emit("join-user", user._id));
+  if (socket.connected && user?._id) {
+    socket.emit("join-user", user._id);
+  }
+  socket.on("messageNotification", updateUnreadConversation);
+  socket.on("newConversation", addNewConversation);
 
   return () => {
-    socket.off("receiveMessage");
+    socket.off("messageNotification", updateUnreadConversation);
+    socket.off("newConversation", addNewConversation);
   };
-}, []);
+}, [user?._id, setAllData]);
 
 
   // Set the owner details

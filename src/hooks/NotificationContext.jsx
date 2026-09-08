@@ -40,6 +40,10 @@ export const NotificationProvider = ({ children }) => {
     };
 
     fetchNotifications();
+    // Vercel deployments may not keep a Socket.IO connection alive. Polling
+    // keeps notifications working in the serverless environment.
+    const poll = window.setInterval(fetchNotifications, 10000);
+    return () => window.clearInterval(poll);
   }, [status]);
 
   useEffect(() => {
