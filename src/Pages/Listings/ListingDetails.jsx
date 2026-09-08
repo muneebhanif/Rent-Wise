@@ -101,7 +101,7 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
       try {
         const response = await GetFav();
         const isListingFavorite = response.data.favoriteListings.some(
-          listing => listing._id === currentListing._id
+          listing => String(listing?._id) === String(currentListing._id)
         );
         setIsFavorite(isListingFavorite);
       } catch (error) {
@@ -119,7 +119,7 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
   const handleAddToFavorites = async () => {
     try {
       const response = await AddFav(currentListing._id);
-      setIsFavorite(!isFavorite);
+      setIsFavorite((previous) => !previous);
        toast({
         title: "Success",
         description: response.data.message,

@@ -13,7 +13,7 @@ function FavoruitesPage() {
     const fetchFavorites = async () => {
       try {
         const response = await GetFav()
-        setFavorites(response.data.favoriteListings)
+        setFavorites((response.data.favoriteListings || []).filter(Boolean))
         setLoading(false)
       } catch (error) {
         setLoading(false)

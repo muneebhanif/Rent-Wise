@@ -4,7 +4,6 @@ import {
   Users,
   Package,
   AlertCircle,
-  BarChart2,
   Plus,
   Edit,
   Printer,
@@ -65,6 +64,23 @@ export default function OwnerDash() {
   const activeRentalCount = agreements.filter(
     (agreement) => agreement.agreementStatus === "active"
   ).length;
+  const formatCompactCurrency = (amount) => {
+    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(amount % 1000000 ? 1 : 0)}m`;
+    if (amount >= 1000) return `$${(amount / 1000).toFixed(amount % 1000 ? 1 : 0)}k`;
+    return `$${amount.toLocaleString()}`;
+  };
+  const performanceData = Array.from({ length: 6 }, (_, index) => {
+    const end = new Date();
+    end.setDate(end.getDate() - (5 - index) * 7);
+    const start = new Date(end);
+    start.setDate(start.getDate() - 6);
+    const count = agreements.filter((agreement) => {
+      const date = new Date(agreement.agreementDate || agreement.createdAt);
+      return date >= start && date <= end;
+    }).length;
+    return { label: `Week ${index + 1}`, count };
+  });
+  const maxPerformance = Math.max(...performanceData.map(({ count }) => count), 1);
   // const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -160,7 +176,7 @@ export default function OwnerDash() {
                 fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
                 fontWeight="bold"
               >
-                ${totalRevenue.toLocaleString()}
+                {formatCompactCurrency(totalRevenue)}
               </Text>
               <Text fontSize={{ base: "xs", sm: "sm" }} color="gray.500">
                 Based on {agreements.length} agreement{agreements.length === 1 ? "" : "s"}
@@ -567,18 +583,35 @@ export default function OwnerDash() {
                 color="gray.500"
                 fontSize={{ base: "xs", sm: "sm", md: "md" }}
               >
-                Your rental performance for the last 30 days
+                Agreement activity over the last 6 weeks
               </Text>
             </CardHeader>
             <CardBody p={{ base: 2, sm: 3, md: 4 }}>
               <Flex
-                height={{ base: "100px", sm: "150px", md: "200px" }}
-                align="center"
-                justify="center"
-                bg="gray.100"
+                height={{ base: "150px", sm: "180px", md: "220px" }}
+                align="end"
+                justify="space-around"
+                gap={2}
+                px={{ base: 2, md: 6 }}
+                pt={6}
+                bg="gray.50"
                 rounded="md"
               >
-                <BarChart2 className="h-8 w-8 sm:h-12 sm:w-12 md:h-16 md:w-16 text-gray-400" />
+                {performanceData.map(({ label, count }) => (
+                  <Flex key={label} direction="column" align="center" justify="end" height="100%" flex={1}>
+                    <Text fontSize="xs" color="gray.600" mb={1}>{count}</Text>
+                    <Box
+                      width="full"
+                      maxW="42px"
+                      minH={count ? "8px" : "2px"}
+                      height={`${Math.max((count / maxPerformance) * 100, count ? 8 : 2)}%`}
+                      bg="orange.400"
+                      roundedTop="md"
+                      aria-label={`${label}: ${count} agreements`}
+                    />
+                    <Text fontSize="2xs" color="gray.500" mt={2}>{label.replace("Week ", "W")}</Text>
+                  </Flex>
+                ))}
               </Flex>
             </CardBody>
             <CardFooter p={{ base: 2, sm: 3, md: 4 }}>

@@ -12,6 +12,10 @@ import ReviewPage from '../DashboardComp.jsx/ReviewDash';
 import FavoruitesPage from '../DashboardComp.jsx/FavoruitesPage';
 import ColorTubeLoader from '../../components/Style/ColorTubeLoader';
 
+const imageUrl = (url) => url && /^https?:\/\//i.test(url)
+  ? url
+  : `${import.meta.env.VITE_BACK_END_URL}${url || ''}`;
+
 export default function Dashboard() {
   const [username, setUserName] = useState('');
   const [useremail, setUserEmail] = useState('');
@@ -30,7 +34,7 @@ export default function Dashboard() {
         const response = await getUser();
         setUserName(response.data.user.name);
 
-        setAvatar(`${import.meta.env.VITE_BACK_END_URL}${response.data.user.imageUrl}`);
+        setAvatar(imageUrl(response.data.user.imageUrl));
         
         setUserEmail(response.data.user.email);
         setUserResponse(response); // Store full response if needed

@@ -10,6 +10,10 @@ import { useDasboardHook } from '../../hooks/DashboardUserContext';
 import { getUser, updateUserDashboardProfile } from '../../Api/DashboardAPI';
 import ColorTubeLoader from '../../components/Style/ColorTubeLoader';
 
+const imageUrl = (url) => url && /^https?:\/\//i.test(url)
+  ? url
+  : `${import.meta.env.VITE_BACK_END_URL}${url || ''}`;
+
 
 export default function MyAccount() {
   const [avatar, setAvatar] = useState('')
@@ -39,7 +43,7 @@ export default function MyAccount() {
         dispatch({ type: 'GET_USER', payload: response.data.user });
         setUsername(response.data.user.name);
         setUserEmail(response.data.user.email);
-        setAvatar(`${import.meta.env.VITE_BACK_END_URL}${response.data.user.imageUrl}`);
+        setAvatar(imageUrl(response.data.user.imageUrl));
         setBio(response.data.user.bio);
         setIsThirdPartyUser(!!response.data.user.googleId || !!response.data.user.facebookId);
         if (response.data.user.NotificationSetting) {
