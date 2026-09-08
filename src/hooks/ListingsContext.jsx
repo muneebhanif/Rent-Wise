@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useReducer } from "react";
-import { getAlListingsofSpecificUser } from "../Api/ListingApi";
+import { getMyListings } from "../Api/ListingApi";
 import { useAuth } from "./AuthContext";
 
 
@@ -62,14 +62,18 @@ export const ListingsProvider = ({ children }) => {
    const { user } = useAuth();
   const [state, dispatch] = useReducer(listingsReducer, initialState);
   useEffect(() => {
+    let active = true;
+    dispatch({ type: "GET_USER_LISTINGS", payload: [] });
     async function getOwnerListings() {
       if (user && user._id) {
-        const user_id = user._id;
-        const response = await getAlListingsofSpecificUser(user_id);
-        dispatch({ type: "GET_USER_LISTINGS", payload: response.data.listing });
+        try {
+          const response = await getMyListings();
+          if (active) dispatch({ type: "GET_USER_LISTINGS", payload: response.data.listing });
+        } catch { if (active) dispatch({ type: "GET_USER_LISTINGS", payload: [] }); }
       }
     }
     getOwnerListings();
+    return () => { active = false; };
   }, [user]);
 
   return (

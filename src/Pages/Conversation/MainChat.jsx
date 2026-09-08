@@ -1,173 +1,73 @@
-import React, { useEffect, useRef, useState } from "react";
-import SideChat from "./SideChat";
-import LiveChat from "./LiveChat";
-import { Flex } from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
-// import { useSocketConnection } from "../../hooks/useSocketConnection";
-
-import { io } from "socket.io-client";
-import SideBar from "./SideBar";
-
-const socket = io(import.meta.env.VITE_BACK_END_URL, {
-  withCredentials: true,
-  autoConnect: !String(import.meta.env.VITE_BACK_END_URL).includes("vercel.app"),
-});
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Box, Flex } from '@chakra-ui/react';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthContext';
+import { fetchConversationsForSidebar } from '../../Api/Chats';
+import SideBar from './SideBar';
+import SideChat from './SideChat';
+import LiveChat from './LiveChat';
 
 export default function MainChat() {
   const { user } = useAuth();
   const location = useLocation();
-  const scrollRef = useRef(null);
-  const { ownerIdDetails, listingIdDetails, userIdDetails } =
-    location.state || {};
-  const [owner, setOwner] = useState(null);
-  const [item, setItem] = useState("");
-  const [convoID, setConvoId] = useState("");
-  const [Messages, setMessages] = useState([]);
-  const [showPopOver, setShowPopOver] = useState(false);
-  const [listings, setListings] = useState([]);
-  const [allData, setAllData] = useState(null);
-  const [isCLicked, setIsCLicked] = useState(false) // check if side bar is clicked to display messages
-  const [checkClick, setCheckClick] = useState(false) // check if side bar is clicked display sidebae or livechat on basis of screen size
-  const [countOfUnreedMessage, setCountOfunreedMessage] = useState(null);
-  const [senderID, setSenderID] = useState(''); 
-
-  useEffect(() => {
-    if (user?._id) {
-      socket.emit("join-user", user._id);
+  const [conversations, setConversations] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const request = useRef(null);
+  const userId = user?._id || user?.id;
+  const refresh = useCallback(async () => {
+    if (request.current) return;
+    const controller = new AbortController();
+    request.current = controller;
+    try {
+      const response = await fetchConversationsForSidebar(controller.signal);
+      if (controller.signal.aborted) return;
+      setConversations(Array.isArray(response.data?.data) ? response.data.data : []);
+      setError('');
+    } catch (err) {
+      if (!controller.signal.aborted) setError(err.response?.data?.message || 'Messages could not be refreshed. Please try again.');
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+      if (request.current === controller) request.current = null;
     }
-
-    socket.on("newConversation", (data) => {
-     
-      setAllData((prevData) => {
-        if (!prevData) return [data];
-        const exists = prevData.some(
-          (conv) => conv._id === data.conversation._id
-        );
-        if (!exists) {
-          return [...prevData, data];
-        }
-        return prevData;
-      });
-    });
-   
-
+  }, []);
+  useEffect(() => {
+    refresh();
+    const timer = window.setInterval(() => { if (!document.hidden) refresh(); }, 5000);
+    window.addEventListener('focus', refresh);
     return () => {
-      socket.off("newConversation"); 
-  
-      if (user?._id) {
-        socket.emit("leave-user", user._id);
-      }
+      clearInterval(timer);
+      window.removeEventListener('focus', refresh);
+      request.current?.abort();
+      request.current = null;
     };
-  }, [user]);
-
+  }, [refresh, userId]);
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [Messages]);
-
-  // Open the owner conversation immediately when arriving from a listing.
-  useEffect(() => {
-    if (!ownerIdDetails?._id || !allData) return;
-    const conversation = allData.find(item =>
-      item.participants?.some(participant => String(participant._id) === String(ownerIdDetails._id))
-    );
-    setOwner(ownerIdDetails);
-    setItem(ownerIdDetails.name || 'Owner');
-    const conversationListings = conversation?.listing || [];
-    const requestedId = listingIdDetails?._id || listingIdDetails;
-    setListings(requestedId
-      ? conversationListings.filter(listing => String(listing?._id || listing) === String(requestedId))
-      : conversationListings);
-    setConvoId(conversation?._id || '');
-    setIsCLicked(true);
-    setCheckClick(true);
-    setShowPopOver(true);
-  }, [ownerIdDetails, allData]);
-
-  const handleSideBarClick = (
-    receiver_id,
-    receiver_name,
-    selectedParticipant,
-    receiver_imageUrl
-  ) => {
-    setCountOfunreedMessage(null)
-    setCheckClick(true)  // check if side bar is clicked display sidebar or livechat on basis of screen size
-    setIsCLicked(true);  // check if side bar is clicked to display messages
-    setShowPopOver(true);
-
-    // Update owner state with the selected participant
-    setOwner({
-      _id: receiver_id,
-      name: receiver_name,
-      imageUrl: receiver_imageUrl,
-    });
-
-    // Filter data to find the relevant conversation for the selected participant
-    const filteredData = allData.find((item) =>
-      item.participants.some((participant) => participant._id === receiver_id)
-    );
-   
-    // Extract the specific listings for this participant
-    const specificListings = filteredData?.listing || [];
-    
-    if (!allData) return;
-    const ConvoID = filteredData?._id || filteredData?.conversation._id ||[];
-    setConvoId(ConvoID);
-
-    // Update the state
-    setItem(selectedParticipant);
-    setListings(specificListings); // Set the specific listings
-    setMessages([]); // Clear messages for the new conversation
+    const state = location.state;
+    if (!state?.ownerIdDetails?._id) return;
+    setSelected({ participant: state.ownerIdDetails, listingId: state.listingIdDetails?._id || state.listingIdDetails });
+    setMobileOpen(true);
+  }, [location.key, location.state]);
+  const conversation = selected && conversations.find(item =>
+    item.participants?.some(person => String(person._id) === String(selected.participant._id)));
+  const choose = (item, participant) => {
+    setSelected({ participant, conversationId: item._id });
+    setMobileOpen(true);
   };
-
   return (
-    
-    <div className="flex h-screen max-h-screen bg-gray-100 overflow-hidden">
-
-
-      <SideBar/>
-     
-        <SideChat
-          listings={listings}
-          allData={allData}
-          setAllData={setAllData}
-          setListings={setListings}
-          handleSideBarClick={handleSideBarClick}
-          owner={owner}
-          setOwner={setOwner}
-          ownerIdDetails={ownerIdDetails}
-          userIdDetails={userIdDetails}
-          listingIdDetails={listingIdDetails}
-          isCLicked={isCLicked}
-          checkClick={checkClick}
-          setCountOfunreedMessage={setCountOfunreedMessage}
-          countOfUnreedMessage={countOfUnreedMessage}
-          senderID={senderID}
-        />
-        <LiveChat
-        setSenderID={setSenderID}
-        setCountOfunreedMessage={setCountOfunreedMessage}
-        countOfUnreedMessage={countOfUnreedMessage}
-          checkClick={checkClick}
-          setCheckClick={setCheckClick}
-          isCLicked={isCLicked}
-          setIsCLicked={setIsCLicked}
-          showPopOver={showPopOver}
-          scrollRef={scrollRef}
-          convoID={convoID}
-          setConvoId={setConvoId}
-          Messages={Messages}
-          setMessages={setMessages}
-          owner={owner}
-          ownerIdDetails={ownerIdDetails}
-          userIdDetails={userIdDetails}
-          listingIdDetails={listingIdDetails}
-          listings={listings}
-          item={item}
-        />
-      </div>
-    
+    <Flex h="100dvh" minH="0" bg="#f6f7f9" color="gray.800" overflow="hidden">
+      <SideBar />
+      <Box as="main" flex="1" minW="0" p={{ base: 0, lg: 4 }}>
+        <Flex h="full" bg="white" overflow="hidden" borderWidth={{ base: 0, lg: '1px' }} borderColor="gray.200" rounded={{ base: 0, lg: '2xl' }} boxShadow={{ lg: 'sm' }}>
+          <SideChat conversations={conversations} userId={userId} selectedId={selected?.participant?._id}
+            onSelect={choose} mobileOpen={mobileOpen} loading={loading} error={error} onRetry={refresh} />
+          <LiveChat key={selected?.participant?._id || 'empty'} participant={selected?.participant}
+            conversation={conversation} initialListingId={selected?.listingId} mobileOpen={mobileOpen}
+            onBack={() => setMobileOpen(false)} onSent={refresh} />
+        </Flex>
+      </Box>
+    </Flex>
   );
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAuthConfig } from "./api";
 
 
 const API_BASE_URL = `${import.meta.env.VITE_BACK_END_URL}/listings`
@@ -46,3 +47,5 @@ export const GetFav = () =>
 
 
   
+
+export const getMyListings = () => axios.get(`${API_BASE_URL}/mine`, getAuthConfig());

@@ -523,12 +523,13 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 {/* owner ki profile */}
                 <Flex alignItems={"center"} flexDir={'column'} gap={2}>
                   <Button
+                    isDisabled={currentListing?.rentalState !== "available"}
                     onClick={handleChatButtonClick}
                     leftIcon={<MessageCircleIcon size={20} />}
                     variant={"customButton"}
                     w="full"
                   >
-                    Chat with Owner
+                    {currentListing?.rentalState === "available" ? "Chat with Owner" : "Currently unavailable"}
                   </Button>
 
                   <Button
@@ -643,7 +644,7 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
 
             {/* bidding component */}
             {
-              currentListing.bidding !== null && currentListing?.bidding?.enabled && (
+              currentListing.rentalState === "available" && currentListing.bidding !== null && currentListing?.bidding?.enabled && (
                 <BiddingSystem currentListing={currentListing} />
               )
             }
