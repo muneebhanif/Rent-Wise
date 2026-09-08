@@ -39,12 +39,9 @@ function SignIn() {
         }
       }
     } catch (error) {
-      if(error.response)
-      {
-       console.error('Login error:', error.response.data.message);
- 
-      }
-       toast.error(error.response.data.message);
+      const message = error.response?.data?.message || "Unable to log in. Please try again.";
+      console.error("Login error:", message);
+      toast.error(message);
      }
   };
 

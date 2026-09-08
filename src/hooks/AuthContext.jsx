@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { User, login as apiLogin } from "../Api/api";
+import { User, login as apiLogin, logout as apiLogout } from "../Api/api";
 
 
 const AuthContext = createContext();
@@ -20,7 +20,10 @@ export const AuthProvider = ({ children }) => {
         setStatus("unauthenticated");
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      // A 401 here is the normal result for a visitor without a session.
+      if (error.response?.status !== 401) {
+        console.error("Error fetching user data:", error);
+      }
       setStatus("unauthenticated");
     }
   };
@@ -38,7 +41,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiLogin(credentials);
       if (response.status === 200) {
-        await fetchUserData();
+        // The login response already contains the authenticated user's id and
+        // role. Set it immediately so a transient cookie propagation delay
+        // cannot leave the app in the unauthenticated state.
+        if (response.data?.user) {
+          setUser(response.data.user);
+          setStatus("authenticated");
+        }
         return response;
       }
     } catch (error) {
@@ -49,8 +58,16 @@ export const AuthProvider = ({ children }) => {
 
 
 
-   const handleLogout = async () => {    
-    setUser(null)
+   const handleLogout = async () => {
+    try {
+      await apiLogout();
+    } catch (error) {
+      // Clear local auth state even if the server session is already gone.
+      if (error.response?.status !== 401) {
+        console.error("Logout error:", error);
+      }
+    }
+    setUser(null);
     setStatus("unauthenticated");
   };
 
