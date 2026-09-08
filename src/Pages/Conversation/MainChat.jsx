@@ -11,6 +11,7 @@ import SideBar from "./SideBar";
 
 const socket = io(import.meta.env.VITE_BACK_END_URL, {
   withCredentials: true,
+  autoConnect: !String(import.meta.env.VITE_BACK_END_URL).includes("vercel.app"),
 });
 
 export default function MainChat() {

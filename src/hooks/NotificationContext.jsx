@@ -48,6 +48,7 @@ export const NotificationProvider = ({ children }) => {
 
   useEffect(() => {
     if (status !== "authenticated" || !user?._id) return undefined;
+    if (String(import.meta.env.VITE_BACK_END_URL).includes("vercel.app")) return undefined;
 
     const socket = io(import.meta.env.VITE_BACK_END_URL, { withCredentials: true });
     const handleNotification = (notification) => {
