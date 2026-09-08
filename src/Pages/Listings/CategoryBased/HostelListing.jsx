@@ -9,6 +9,7 @@ import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
 import { useAuth } from '../../../hooks/AuthContext';
+import { formatPrice } from '../../../utils/formatPrice';
 const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function HostelListing() {
@@ -250,7 +251,7 @@ export default function HostelListing() {
                 <Box px={2}>
                 <Heading py={2} fontSize={'20px'} fontWeight={'semibold'}>{hostel.title}</Heading>
                   <Flex gap={1} alignItems={'baseline'}>
-                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{(Number(hostel.price) || 0).toLocaleString()} PKR</span>
+                    <span className="text-[20px] font-bold mb-2 flex items-center text-orange-500">{formatPrice(hostel.price)} PKR</span>
                     <span className="text-gray-600">/{hostel.priceUnit}</span>
                   </Flex>
                   

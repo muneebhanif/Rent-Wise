@@ -23,6 +23,7 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import { getAllListingAPI } from "../Api/ListingApi";
+import { formatPrice } from "../utils/formatPrice";
 import {
   SetSubscriptionNotification,
   GetSubscriptionNotification,
@@ -457,7 +458,7 @@ useEffect(() => {
                         {rental?.title || 'Rental listing'}
                       </Heading>
                       <Text fontSize={"lg"} fontWeight={"bold"} color="orange.600" whiteSpace="nowrap" ml={3}>
-                        {(Number(rental?.price) || 0).toLocaleString()} PKR
+                        {formatPrice(rental?.price)} PKR
                       </Text>
                     </Flex>
 

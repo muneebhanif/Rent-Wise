@@ -3,6 +3,7 @@ import { Box, Grid, Text, Image, Badge, VStack, Heading, Button , Flex } from '@
 import { GetFav } from '../../Api/ListingApi'
 import { Link } from 'react-router-dom'
 import SpinLoader from '../../components/Style/SpinLoader';
+import { formatPrice } from '../../utils/formatPrice';
 const baseUrl = import.meta.env.VITE_BACK_END_URL;
 function FavoruitesPage() {
   const [favorites, setFavorites] = useState([])
@@ -69,7 +70,7 @@ function FavoruitesPage() {
               <Heading fontSize={{ base: "md", md: "lg" }}>{listing.title}</Heading>
               <Badge colorScheme="orange">{listing.category}</Badge>
               <Text fontSize={{ base: "md", md: "xl" }} fontWeight="bold">
-                ${listing.price}/{listing.priceUnit}
+                {formatPrice(listing.price)} PKR/{listing.priceUnit}
               </Text>
               <Text fontSize={{ base: "sm", md: "md" }} noOfLines={2}>
                 {listing.description}

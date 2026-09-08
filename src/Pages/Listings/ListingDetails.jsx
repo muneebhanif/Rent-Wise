@@ -56,6 +56,7 @@ import ReviewsInListing from "./Comments/ReviewsInListing";
 import ColorTubeLoader from "../../components/Style/ColorTubeLoader";
 import BiddingSystem from "./BiddingSystem";
 import DisplayLocation from "../Location/DisplayLocation";
+import { formatPrice } from "../../utils/formatPrice";
 
 const baseUrl = import.meta.env.VITE_BACK_END_URL;
 const mediaUrl = (url) => {
@@ -238,7 +239,7 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
               </Heading>
               <Flex  gap={4} flexDir={{base:'column', sm:'row'}}>
                 <Badge colorScheme="orange" px={3} py={1} fontSize="m" w={'fit-content'}>
-                  Pkr{currentListing?.price}/{currentListing?.priceUnit}
+                  {formatPrice(currentListing?.price)} PKR/{currentListing?.priceUnit}
                 </Badge>
                 {isOwner && (
                   <Badge colorScheme="green" px={3} py={1} fontSize="m">
