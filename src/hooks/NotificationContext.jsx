@@ -2,6 +2,7 @@
 // use --> useContext(NotificationContext) to access details
 
 import { createContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
  import { getNotifications, readAllNotifications, clearAllNotifications, readOneNotification } from "../Api/Notification";
 
 export const NotificationContext = createContext();
@@ -9,9 +10,16 @@ export const NotificationContext = createContext();
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { status } = useAuth();
 
   // Fetch existing notifications from backend on mount
   useEffect(() => {
+    if (status !== "authenticated") {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     const fetchNotifications = async () => {
       try {
         const response = await getNotifications();
@@ -22,12 +30,16 @@ export const NotificationProvider = ({ children }) => {
         const count = fetchedNotifications.filter((n) => !n.isRead).length;
         setUnreadCount(count);
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        // Notifications are private; anonymous visitors are expected to get
+        // a 401 until they sign in.
+        if (error.response?.status !== 401) {
+          console.error("Error fetching notifications:", error);
+        }
       }
     };
 
     fetchNotifications();
-  }, []);
+  }, [status]);
   useEffect(() => {
     const handlePushMessage = (event) => {
       setUnreadCount(unreadCount + 1);
