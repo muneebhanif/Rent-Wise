@@ -28,10 +28,11 @@ export default function MyAccount() {
   const [avatarPreview, setAvatarPreview] = useState('');
   const [loading, setLoading] = useState(true);
   const [notificationSettings, setNotificationSettings] = useState({
-    messages: false,
-    reviews: false,
-    systemUpdates: false,
-    comments: false
+    review: true,
+    comment: true,
+    system: true,
+    aggreement: true,
+    chat: true,
   });
   const toast = useToast();
 

@@ -14,7 +14,7 @@ import {
     Badge,
   } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react'
-import { FaBell, FaHome, FaComments, FaEllipsisH, FaCheck, FaTrash } from 'react-icons/fa'
+import { FaBell, FaHome, FaComments, FaEllipsisH, FaCheck, FaTrash, FaFileContract } from 'react-icons/fa'
 import { clearAllNotifications, readAllNotifications, readOneNotification } from '../../Api/Notification';
 import { NotificationContext } from '../../hooks/NotificationContext';
 import { useLocation } from 'react-router-dom';
@@ -180,6 +180,9 @@ export default function Notification({}) {
                     <Box flexShrink={0} mt={1}>
                       {notification.type === 'review' && <FaHome color="blue" />}
                       {notification.type === 'comment' && <FaComments color="green" />}
+                      {notification.type === 'chat' && <FaComments color="orange" />}
+                      {notification.type === 'aggreement' && <FaFileContract color="orange" />}
+                      {notification.type === 'system' && <FaEllipsisH color="purple" />}
                       {notification.type === 'other' && <FaEllipsisH color="purple" />}
                     </Box>
                     <Box ml={3} flex="1">

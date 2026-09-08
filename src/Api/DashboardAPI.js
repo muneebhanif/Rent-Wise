@@ -10,6 +10,7 @@ export const updateUserDashboardProfile = async (id, formData) => {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    withCredentials: true,
   });
 };
 

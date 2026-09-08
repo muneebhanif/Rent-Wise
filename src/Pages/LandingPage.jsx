@@ -572,30 +572,9 @@ useEffect(() => {
         
         /* for the main heading */
         .mainHeading {
-  width: 20ch;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 2px solid; /* Cursor */
-  animation: typing 3s linear infinite alternate-reverse,
-             blink-cursor 0.75s step-end infinite;
-}
-
-@keyframes typing {
-  from {
-      width: 10ch;
-  }
-  to {
-      width: 20ch;
-  }
-}
-
-@keyframes blink-cursor {
-  from, to {
-      border-color: transparent; /* Hide cursor */
-  }
-  50% {
-      border-color: #ffffff; /* Show cursor */
-  }
+  width: auto;
+  white-space: normal;
+  overflow: visible;
 }
     
    

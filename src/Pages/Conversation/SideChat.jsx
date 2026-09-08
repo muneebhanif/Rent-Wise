@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Input, Text, VStack } from '@chakra-ui/react';
+import { Avatar, Badge, Box, Flex, Input, Text, VStack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { getSideBarParticipants , fetchConversationsForSidebar } from '../../Api/Chats';
 
@@ -72,7 +72,9 @@ useEffect(() => {
   socket.on("receiveMessage", (data) => {
     setAllData(prevData => {
       return prevData.map(conv => {
-        if (conv._id === data.conversationId) {
+        const conversationId = data.conversationId || data.conversationID;
+        const receiverId = data.receiver?._id || data.receiver;
+        if (conv._id === conversationId && String(receiverId) === String(user?._id)) {
           return { 
             ...conv, 
             unreadMessagesCount: (conv.unreadMessagesCount || 0) + 1
@@ -155,6 +157,11 @@ useEffect(() => {
               py={3}
               onClick={() => {
                 setActiveItem(item._id);
+                setAllData((previous) => previous.map((conversation) =>
+                  conversation.participants?.some((participant) => participant._id === item._id)
+                    ? { ...conversation, unreadMessagesCount: 0 }
+                    : conversation
+                ));
                 handleSideBarClick(item._id, item.name, item, item.imageUrl)
               }}
             >
@@ -164,6 +171,15 @@ useEffect(() => {
                 <Text fontWeight="semibold" noOfLines={1}>{item.name}</Text>
                 <Text fontSize="xs" color="gray.500">Conversation</Text>
               </Box>
+              {allData?.find((conversation) =>
+                conversation.participants?.some((participant) => participant._id === item._id)
+              )?.unreadMessagesCount > 0 && (
+                <Badge ml="auto" colorScheme="orange" borderRadius="full">
+                  {allData.find((conversation) =>
+                    conversation.participants?.some((participant) => participant._id === item._id)
+                  ).unreadMessagesCount}
+                </Badge>
+              )}
             </Box>
           ))
         ) : (

@@ -3,6 +3,7 @@
 
 import { createContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
+import { io } from "socket.io-client";
  import { getNotifications, readAllNotifications, clearAllNotifications, readOneNotification } from "../Api/Notification";
 
 export const NotificationContext = createContext();
@@ -10,7 +11,7 @@ export const NotificationContext = createContext();
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const { status } = useAuth();
+  const { status, user } = useAuth();
 
   // Fetch existing notifications from backend on mount
   useEffect(() => {
@@ -40,9 +41,30 @@ export const NotificationProvider = ({ children }) => {
 
     fetchNotifications();
   }, [status]);
+
+  useEffect(() => {
+    if (status !== "authenticated" || !user?._id) return undefined;
+
+    const socket = io(import.meta.env.VITE_BACK_END_URL, { withCredentials: true });
+    const handleNotification = (notification) => {
+      setNotifications((previous) => {
+        if (previous.some((item) => item._id === notification._id)) return previous;
+        return [notification, ...previous];
+      });
+      setUnreadCount((count) => count + 1);
+    };
+
+    socket.on("connect", () => socket.emit("join-user", user._id));
+    socket.on("notification", handleNotification);
+
+    return () => {
+      socket.off("notification", handleNotification);
+      socket.disconnect();
+    };
+  }, [status, user?._id]);
   useEffect(() => {
     const handlePushMessage = (event) => {
-      setUnreadCount(unreadCount + 1);
+      setUnreadCount((count) => count + 1);
       setNotifications((prev) => {
         const exists = prev.some(
           (notif) => notif._id === event.data._id // Use `_id` instead of `title` and `message`

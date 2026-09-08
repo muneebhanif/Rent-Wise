@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { User, login as apiLogin, logout as apiLogout } from "../Api/api";
+import { User, login as apiLogin, logout as apiLogout, setAuthToken } from "../Api/api";
 
 
 const AuthContext = createContext();
@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("loading");
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (preserveExistingUser = false) => {
     try {
       const response = await User();
       const userData = response.data?.user;
@@ -24,7 +24,10 @@ export const AuthProvider = ({ children }) => {
       if (error.response?.status !== 401) {
         console.error("Error fetching user data:", error);
       }
-      setStatus("unauthenticated");
+      if (!preserveExistingUser) {
+        setUser(null);
+        setStatus("unauthenticated");
+      }
     }
   };
 
@@ -48,6 +51,10 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data.user);
           setStatus("authenticated");
         }
+        // Hydrate the profile from the API for fields that may have changed
+        // since the login response was created, but retain the login profile
+        // if an old deployment has not issued the cookie correctly yet.
+        await fetchUserData(true);
         return response;
       }
     } catch (error) {
@@ -67,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         console.error("Logout error:", error);
       }
     }
+    setAuthToken(null);
     setUser(null);
     setStatus("unauthenticated");
   };
