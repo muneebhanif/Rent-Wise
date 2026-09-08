@@ -160,7 +160,17 @@ useEffect(() => {
         
         <Flex flexDir={'column'} gap={3} p={2}>
         <Text color={'orange.500'} fontSize={'xl'} fontWeight="bold">Chats</Text>
-        <Input bg="gray.50"  type='text' placeholder='Search Chat' color={'orange.600'} onChange={(e)=> setSearchChat(e.target.value)} />
+        <Input
+          bg="gray.50"
+          type="text"
+          placeholder="Search Chat"
+          color="orange.600"
+          value={searchChat}
+          onChange={(e) => setSearchChat(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') e.preventDefault();
+          }}
+        />
         </Flex>
         
 

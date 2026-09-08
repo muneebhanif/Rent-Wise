@@ -89,6 +89,8 @@ export default function LiveChat({
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
 
+    if (!message.trim() || !owner?._id) return;
+
     try {
       const listingsToSend = listingIdDetails || localListingId || [];
 
@@ -274,7 +276,12 @@ export default function LiveChat({
         _focus={{ outline: "none" }}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.currentTarget.form?.requestSubmit(); } }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            e.currentTarget.form?.requestSubmit();
+          }
+        }}
         autoComplete="off"
         spellCheck="false"
       />

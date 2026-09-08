@@ -304,6 +304,12 @@ useEffect(() => {
             color="orange.500"
             fontSize={{base:"sm",sm:"lg"}}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleScroll();
+              }
+            }}
           />
           <Button
             px={4}

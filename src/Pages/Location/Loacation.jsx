@@ -154,6 +154,12 @@ const LocationSearch = ({ onLocationSelect, initialLocation   }) => {
         placeholder="Type address..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch();
+          }
+        }}
         style={{ padding: '8px', width: '100%' }}
       />
       <Button variant={'customButton'} onClick={() => handleSearch()} style={{ padding: '8px' }}>Search</Button>
