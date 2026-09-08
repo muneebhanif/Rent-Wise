@@ -259,23 +259,6 @@ useEffect(() => {
                   </Button>
                 </Link>
               </Box>
-              <Box ml={3}>
-                <Link to="#featured" _hover={{ textDecoration: "none" }}>
-                  <Button
-                    px={{ base: 2, md: 10 }}
-                    py={{ base: 3, md: 7 }}
-                    fontSize={{ base: "sm", md: "lg" }}
-                    fontWeight="medium"
-                    colorScheme="orange"
-                    bg="orange.500"
-                    _hover={{ bg: "orange.700" }}
-                    transition="all 0.3s ease"
-                    onClick={handleFeaturedScroll}
-                  >
-                    View listings
-                  </Button>
-                </Link>
-              </Box>
             </Flex>
           </Flex>
         </Container>
@@ -529,27 +512,6 @@ useEffect(() => {
           <Text mt={6} fontSize={{base:"sm",sm:"xl"}} color="orange.50" maxW="3xl" mx="auto">
             {user ? 'Discover new places, save your favourites, and manage every rental from one account.' : 'Join RentWise today and unlock access to our exclusive selection of high-end rentals.'}
           </Text>
-          <Button
-            as={Link}
-            to={user ? "#featured" : "/auth/signup"}
-            onClick={user ? handleFeaturedScroll : undefined}
-            mt={12}
-            display="inline-flex"
-            alignItems="center"
-            justifyContent="center"
-            px={{base:3,sm:8}}
-            py={7}
-            border="1px solid transparent"
-            fontSize="lg"
-            fontWeight="medium"
-            rounded="md"
-            color="orange.500"
-            bg="white"
-            _hover={{ bg: "orange.50" }}
-            transition="all 0.3s ease"
-          >
-            {user ? 'Browse all rentals' : 'Sign Up for Exclusive Access'}
-          </Button>
         </Container>
       </Box>
 
