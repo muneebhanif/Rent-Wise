@@ -3,6 +3,14 @@ import axios from "axios";
 const API_BASE_URL = `${import.meta.env.VITE_BACK_END_URL}/auth`;
 const AUTH_TOKEN_KEY = "rentwise_auth_token";
 
+export const getAuthConfig = () => {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  return {
+    withCredentials: true,
+    ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+  };
+};
+
 export const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem(AUTH_TOKEN_KEY, token);
