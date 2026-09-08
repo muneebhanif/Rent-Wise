@@ -1,17 +1,13 @@
+import { useEffect, useState } from "react"
 import { Users, Home, Calendar, TrendingUp, DollarSign, Clock, AlertCircle, FileText } from "lucide-react"
+import { getAdminDashboardStats } from "../../Api/Admin"
 
 const AdminOverview = () => {
-  // This would be connected to real data in a production app
-  const stats = {
-    totalUsers: 1247,
-    totalListings: 546,
-    activeListings: 432,
-    totalBookings: 897,
-    growthRate: 12.4,
-    revenue: 45690,
-    pendingApprovals: 24,
-    systemAlerts: 2,
-  }
+  const [stats, setStats] = useState(null)
+  useEffect(() => {
+    getAdminDashboardStats().then((response) => setStats(response.data.data))
+  }, [])
+  if (!stats) return <div className="p-6 text-gray-500">Loading dashboard statistics...</div>
 
 
   return (
@@ -82,7 +78,7 @@ const AdminOverview = () => {
           <div className="flex justify-between items-start mb-4">
             <div>
               <p className="text-sm font-medium text-gray-500">Revenue</p>
-              <h3 className="text-3xl font-bold text-gray-900">${stats.revenue.toLocaleString()}</h3>
+              <h3 className="text-3xl font-bold text-gray-900">{stats.revenue.toLocaleString()} PKR</h3>
             </div>
             <div className="bg-orange-100 p-3 rounded-lg">
               <DollarSign className="h-6 w-6 text-orange-600" />
@@ -112,8 +108,8 @@ const AdminOverview = () => {
           <div className="h-60 flex items-center justify-center bg-gray-50 rounded-lg">
             <div className="text-center">
               <TrendingUp size={48} className="mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-500">Growth chart visualization would appear here</p>
-              <p className="text-sm text-gray-400">Connected to real analytics in production</p>
+              <p className="text-gray-500">{stats.activeListings} active listings</p>
+              <p className="text-sm text-gray-400">{stats.totalUsers} registered users</p>
             </div>
           </div>
         </div>
@@ -135,9 +131,8 @@ const AdminOverview = () => {
             <div className="flex items-start p-3 bg-red-50 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 mr-3" />
               <div>
-                <p className="font-medium text-gray-900">{stats.systemAlerts} System Alerts</p>
-                <p className="text-sm text-gray-600">Issues that need attention</p>
-                <button className="mt-2 text-sm font-medium text-orange-600 hover:text-orange-700">View Alerts</button>
+                <p className="font-medium text-gray-900">{stats.totalListings - stats.activeListings} Inactive Listings</p>
+                <p className="text-sm text-gray-600">Listings not currently active</p>
               </div>
             </div>
           </div>

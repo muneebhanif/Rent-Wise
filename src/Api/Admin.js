@@ -4,6 +4,8 @@ const API_BASE_URL = `${import.meta.env.VITE_BACK_END_URL}/rentwise`;
 
 export const getAllLists = () =>
   axios.get(`${API_BASE_URL}/admin/getAllLists`, { withCredentials: true });
+export const getAdminDashboardStats = () =>
+  axios.get(`${API_BASE_URL}/admin/dashboardStats`, { withCredentials: true });
 export const getListingById = (id) =>
   axios.get(`${API_BASE_URL}/admin/getAllLists/${id}`, {
     withCredentials: true,

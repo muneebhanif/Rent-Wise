@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useAuth } from "../../hooks/AuthContext"
 import {
   SidebarProvider,
   Sidebar,
@@ -17,6 +18,7 @@ import BlockchainAgreements from "./BlockchainAgreements"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { user } = useAuth()
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -100,8 +102,8 @@ export default function AdminDashboard() {
                   AD
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">Admin User</p>
-                  <p className="text-xs text-gray-500">admin@rentwise.com</p>
+                  <p className="text-sm font-medium text-gray-900">{user?.name || "Admin"}</p>
+                  <p className="text-xs text-gray-500">{user?.email || ""}</p>
                 </div>
               </div>
             </div>

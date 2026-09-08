@@ -182,7 +182,7 @@ const ListingManagement = ({ categoryFilter = "All" }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">{listing?.title}</h3>
               <div className="flex items-center text-sm text-gray-500 mb-2">
                 <MapPin size={14} className="mr-1" />
-                <span className="truncate">{listing?.location}</span>
+                <span className="truncate">{[listing?.location?.city, listing?.location?.state, listing?.location?.country].filter(Boolean).join(", ") || "Location unavailable"}</span>
               </div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center text-sm font-medium text-gray-900">
@@ -289,7 +289,7 @@ const ListingManagement = ({ categoryFilter = "All" }) => {
                 <h3 className="text-2xl font-bold text-white">{selectedListing.title}</h3>
                 <div className="flex items-center text-white mt-2">
                   <MapPin size={16} className="mr-1" />
-                  <span>{selectedListing.location}</span>
+                  <span>{[selectedListing.location?.city, selectedListing.location?.state, selectedListing.location?.country].filter(Boolean).join(", ") || "Location unavailable"}</span>
                 </div>
               </div>
             </div>
