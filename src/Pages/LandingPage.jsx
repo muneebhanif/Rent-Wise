@@ -89,7 +89,13 @@ const LandingPage = () => {
   const handleScroll = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  const handleFeaturedScroll = () => document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
+  const handleFeaturedScroll = (event) => {
+    event?.preventDefault();
+    const featured = document.getElementById('featured');
+    if (!featured) return;
+    featured.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.history.replaceState(null, '', `${window.location.pathname}#featured`);
+  };
   
   useEffect(() => {
     setCurrentPage(1);
@@ -236,7 +242,7 @@ useEffect(() => {
 
             <Flex mt={10} justifyContent="center" className="animate-fade-in-up animation-delay-600">
               <Box rounded="md" shadow="md">
-                <Link to={user ? "#featured" : "/auth/signup"} _hover={{ textDecoration: "none" }}>
+                <Link to={user ? "#featured" : "/auth/signup"} onClick={user ? handleFeaturedScroll : undefined} _hover={{ textDecoration: "none" }}>
                   <Button
                   
                     px={{ base: 2, md: 10 }}
@@ -526,6 +532,7 @@ useEffect(() => {
           <Button
             as={Link}
             to={user ? "#featured" : "/auth/signup"}
+            onClick={user ? handleFeaturedScroll : undefined}
             mt={12}
             display="inline-flex"
             alignItems="center"
