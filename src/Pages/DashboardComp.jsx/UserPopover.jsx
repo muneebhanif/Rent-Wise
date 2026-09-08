@@ -18,13 +18,16 @@ import { useContext, useEffect, useState } from "react";
 import { fetchConversationsForSidebar } from "../../Api/Chats";
 import AgreementTemplate from "../Agreement/AgreementTemplate";
 import { useNavigate } from "react-router-dom";
-import { ListingsContext } from "../../hooks/ListingsContext";
+import { useAuth } from "../../hooks/AuthContext";
 
 export default function UserPopover({tenant,convoID,listings = []}) {
   // const [participantsDetail, setParticipantsDetail] = useState([]);
-  const { state } = useContext(ListingsContext);
-  const { userListings } = state;
-  const conversationListings = Array.isArray(listings) ? listings.filter(item => item?._id || typeof item === 'string') : [];
+  const { user } = useAuth();
+  const userId = user?._id || user?.id;
+  const conversationListings = Array.isArray(listings) ? listings.filter(listing => {
+    const ownerId = listing?.owner?._id || listing?.owner;
+    return userId && ownerId && String(ownerId) === String(userId);
+  }) : [];
 
 
   const navigate = useNavigate();
@@ -53,7 +56,7 @@ export default function UserPopover({tenant,convoID,listings = []}) {
         <PopoverTrigger>
           <Flex gap={3} alignItems={"center"}>
             <Text cursor={'pointer'} fontWeight={"bold"} fontFamily={'cursive'} color={'orange.500'} fontSize={{base:'sm',md:"md"}}>
-              Create Aggreement
+              Create Agreement
             </Text>
             <Box display={{base:'none', sm:'inherit'}}>
             <ScrollText

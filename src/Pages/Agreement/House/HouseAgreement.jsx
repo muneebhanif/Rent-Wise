@@ -41,7 +41,7 @@ const navigate = useNavigate();
   });
 
   useEffect(() => {
-      if (!list_Title || !list_category || !listId) return;
+      if (!tenant?._id || !list_Title || !list_category || !listId) return;
       setRenterId(tenant._id);
 
     }, [list_category, listId, list_Title, tenant]);
@@ -53,13 +53,13 @@ const navigate = useNavigate();
 
       try {
         
-        if (!tenant || !listId) {
+        if (!tenant?._id || !listId || !convoID) {
           return;
         }
         setRenterId(tenant._id);
         const data = await createAgreement({
           aggrementDetail:formData,
-          renterId,
+          renterId: tenant._id,
           ownerConfirmed,
           listingId: listId,
           conversationID: convoID,
@@ -75,7 +75,16 @@ const navigate = useNavigate();
           isClosable: true,
         });
       } catch (error) {
-        console.log("errorInAgreement creation is: ", error);
+        toast({
+          title: "Could not create agreement",
+          description: error.response?.data?.message ||
+            (error.response?.status === 401
+              ? "Please sign in again to create an agreement."
+              : "Unable to create the agreement. Please try again."),
+          status: "error",
+          duration: 6000,
+          isClosable: true,
+        });
       }
     };
    
