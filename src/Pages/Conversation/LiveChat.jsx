@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 import { io } from "socket.io-client";
 import ListingsHorizontalBox from "./ListingsHorizontalBox";
 import { ArrowBigLeft } from "lucide-react";
+import { chatMediaUrl } from './chatMedia';
 
 const socket = io(import.meta.env.VITE_BACK_END_URL, {
   withCredentials: true,
@@ -131,8 +132,7 @@ export default function LiveChat({
   flexDir="column"
   flex="1"
   bg="gray.50"
-  boxShadow="md"
-  borderRadius="md"
+  boxShadow="sm"
   w={{ base: "100%", sm: "75%" }}
   h="100vh"
   display={{ base: checkClick ? "inherit" : "none", md: "inherit" }}
@@ -147,8 +147,10 @@ export default function LiveChat({
         color={"white"}
         p={{base:2, sm:4}}
         bg={"white"}
-        h={"80px"}
-        borderBottom={'gray.200'}
+        h={{ base: "72px", md: "84px" }}
+        borderBottom="1px solid"
+        borderColor="gray.200"
+        px={{ base: 3, md: 6 }}
        
       >
         
@@ -168,10 +170,10 @@ export default function LiveChat({
               <Avatar
                 mr={2}
                 size={{base:'sm',sm:'md'}}
-                src={
-                  `${import.meta.env.VITE_BACK_END_URL}${owner.imageUrl}` ||
-                  owner.imageUrl
-                }
+                name={owner.name}
+                bg="orange.100"
+                color="orange.700"
+                src={chatMediaUrl(owner.imageUrl)}
               />
               <Text color={'black'} fontWeight={'semibold'} fontSize={{base:'sm', sm:'lg', md:'xl'}}>{owner.name}</Text>
             </Link>
@@ -196,7 +198,7 @@ export default function LiveChat({
         
         display={"flex"}
         flex="1"
-        p={6}
+        p={{ base: 3, md: 6 }}
         flexDir={"column"}
         gap={4}
   

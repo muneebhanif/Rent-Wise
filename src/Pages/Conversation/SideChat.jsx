@@ -4,6 +4,7 @@ import { getSideBarParticipants , fetchConversationsForSidebar } from '../../Api
 
 import { io } from "socket.io-client";
 import { useAuth } from '../../hooks/AuthContext';
+import { chatMediaUrl } from './chatMedia';
 
 const socket = io(import.meta.env.VITE_BACK_END_URL, {
   withCredentials: true,
@@ -158,8 +159,11 @@ useEffect(() => {
               }}
             >
      
-              <Avatar mr={3} src={`${import.meta.env.VITE_BACK_END_URL}${item.imageUrl}`|| item.imageUrl} />
-              <Text fontWeight={'semibold'}>{item.name}</Text>
+              <Avatar name={item.name} mr={3} size="md" bg="orange.100" color="orange.700" src={chatMediaUrl(item.imageUrl)} />
+              <Box minW={0}>
+                <Text fontWeight="semibold" noOfLines={1}>{item.name}</Text>
+                <Text fontSize="xs" color="gray.500">Conversation</Text>
+              </Box>
             </Box>
           ))
         ) : (

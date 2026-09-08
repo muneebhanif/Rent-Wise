@@ -23,7 +23,7 @@ export default function SideBar() {
   return (
     <Flex minH="100vh" bg="gray.100">
       {/* Sidebar */}
-      <Box w="16" bg="white" borderRight="1px" borderColor="gray.200" py={4} display="flex" flexDirection="column" alignItems="center">
+      <Box w={{ base: "14", md: "16" }} bg="white" borderRight="1px" borderColor="gray.200" py={4} display="flex" flexDirection="column" alignItems="center" boxShadow="sm" zIndex={2}>
         {/* Logo */}
         {/* <Box mb={8} h={10} w={10} display="flex" alignItems="center" justifyContent="center" borderRadius="full" bg="blue.500" color="white">
           <Text fontSize="xl" fontWeight="bold">M</Text>
