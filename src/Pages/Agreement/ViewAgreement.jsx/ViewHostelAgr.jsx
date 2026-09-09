@@ -15,9 +15,11 @@ import PopOverRenterConfirm from "./PopOverRenterConfirm";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ColorTubeLoader from "../../../components/Style/ColorTubeLoader";
+import { AgreementCancellationBanner, AgreementCancelButton } from "../AgreementCancellationSection";
 
 export default function ViewHostelAgr() {
   const { user } = useAuth();
+  const [agreementData, setAgreementData] = useState(null);
   const [ownerConfirmed, setOwnerConfirmed] = useState(true);
   const [renterConfirmed, setRenterConfirmed] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -49,10 +51,12 @@ export default function ViewHostelAgr() {
         if (!user || !_id) return;
 
         const response = await GetAggreementsByID(_id);
-        setListName(response?.data?.data?.listingId?.title);
+        const data = response?.data?.data;
+        setAgreementData(data);
+        setListName(data?.listingId?.title);
 
         const aggrDetail =
-          response.data?.data?.agreementDetailsId?.aggrementDetail;
+          data?.agreementDetailsId?.aggrementDetail || {};
         setFormData({
           ...formData,
           createdDate: aggrDetail.createdDate,
@@ -113,6 +117,13 @@ export default function ViewHostelAgr() {
         <Heading as="h1" size="xl" mb={6} textAlign="center">
           Hostel Rental Agreement
         </Heading>
+        {agreementData && (
+          <AgreementCancellationBanner
+            agreement={agreementData}
+            currentUserId={user?._id}
+            onUpdated={() => window.location.reload()}
+          />
+        )}
         <VStack spacing={4} align="start" fontSize="sm">
           <Text>
             This rent agreement is being created, on this day of
@@ -317,28 +328,36 @@ export default function ViewHostelAgr() {
               >{`${renterDetails?.name} not confirmed this agreement`}</Text>
             )}
 
-            {renterDetails?._id === user?._id && !renterConfirmed && (
-                          <Button
-                            w={"fit-content"}
-                            onClick={SetRenterStatus}
-                            bg={"black"}
-                            color={"white"}
-                          >
-                            {renterConfirmed ? (
-                              <Text>I dont agree to this agreemnt</Text>
-                            ) : (
-                              <Text>I agree to this agreement</Text>
-                            )}
-                          </Button>
-                        )}
+            {renterDetails?._id === user?._id && !renterConfirmed && agreementData?.agreementStatus !== 'cancelled' && agreementData?.cancellation?.status !== 'pending' && (
+              <Button
+                w={"fit-content"}
+                onClick={SetRenterStatus}
+                bg={"black"}
+                color={"white"}
+              >
+                {renterConfirmed ? (
+                  <Text>I dont agree to this agreemnt</Text>
+                ) : (
+                  <Text>I agree to this agreement</Text>
+                )}
+              </Button>
+            )}
+
+            {agreementData && (ownerDetail?._id === user?._id || renterDetails?._id === user?._id) && (
+              <AgreementCancelButton
+                agreement={agreementData}
+                currentUserId={user?._id}
+                onUpdated={() => window.location.reload()}
+              />
+            )}
                         
             {renterDetails?._id === user?._id && renterConfirmed && popOver && (
-                          <PopOverRenterConfirm
-                            aggId={_id}
-                            renterConfirmed={renterConfirmed}
-                            setRenterConfirmed={setRenterConfirmed}
-                          />
-                        )}
+              <PopOverRenterConfirm
+                aggId={_id}
+                renterConfirmed={renterConfirmed}
+                setRenterConfirmed={setRenterConfirmed}
+              />
+            )}
           </Flex>
         </VStack>
       </Box>

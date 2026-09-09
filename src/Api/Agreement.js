@@ -24,3 +24,12 @@ export const VerifyAggrementByRenter = (payload) =>
 
 export const UpdateAggrementByOwner = (payload) => 
   axios.post(`${API_BASE_URL}/updateAggreementByOwner`, payload, getAuthConfig());
+
+export const requestAgreementCancellation = (payload) =>
+  axios.post(`${API_BASE_URL}/requestCancellation`, payload, getAuthConfig());
+
+export const confirmAgreementCancellation = (payload) =>
+  axios.post(`${API_BASE_URL}/confirmCancellation`, payload, getAuthConfig());
+
+export const declineAgreementCancellation = (payload) =>
+  axios.post(`${API_BASE_URL}/declineCancellation`, payload, getAuthConfig());

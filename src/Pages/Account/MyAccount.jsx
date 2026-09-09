@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, AlertIcon, Avatar, Box, Button, Divider, Flex, FormControl,
-  FormHelperText, FormLabel, Heading, Input, SimpleGrid, Spinner, Switch,
+  FormHelperText, FormLabel, Grid, Heading, Input, Spinner, Switch,
   Tab, TabList, TabPanel, TabPanels, Tabs, Text, Textarea, useToast, VStack,
 } from '@chakra-ui/react';
 import { ArrowLeft, BellRing, Camera, LockKeyhole, Save, ShieldCheck, UserRound } from 'lucide-react';
@@ -151,7 +151,7 @@ export default function MyAccount() {
         </Flex>
 
         {loadError ? <Alert status="error" rounded="xl"><AlertIcon /><Box flex="1"><Text fontWeight="semibold">Account settings unavailable</Text><Text fontSize="sm">{loadError}</Text></Box><Button size="sm" onClick={loadProfile}>Retry</Button></Alert> : (
-          <SimpleGrid columns={{ base: 1, lg: '280px minmax(0, 1fr)' }} gap={6} alignItems="start">
+          <Grid templateColumns={{ base: '1fr', lg: '280px minmax(0, 1fr)' }} gap={6} alignItems="start">
             <Box bg="#173d34" color="white" rounded="2xl" p={6} position={{ lg: 'sticky' }} top={{ lg: 24 }}>
               <Flex direction="column" align="center" textAlign="center">
                 <Box position="relative"><Avatar size="2xl" name={profile.name} src={avatarPreview || avatarUrl} bg="orange.100" color="orange.800" border="4px solid" borderColor="whiteAlpha.300" /><Button as="label" htmlFor="avatar-upload" position="absolute" right={-2} bottom={0} minW={0} w="38px" h="38px" p={0} rounded="full" bg="orange.400" color="#173d34" cursor="pointer" _hover={{ bg: 'orange.300' }} aria-label="Change profile photo"><Camera size={17} /></Button><Input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" display="none" onChange={selectAvatar} /></Box>
@@ -175,7 +175,7 @@ export default function MyAccount() {
                 </TabPanels>
               </Tabs>
             </Box>
-          </SimpleGrid>
+          </Grid>
         )}
       </Box>
     </Box>

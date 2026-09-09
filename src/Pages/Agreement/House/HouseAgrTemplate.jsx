@@ -16,6 +16,7 @@ import { useAuth } from '../../../hooks/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import SendToTenant from '../SendToTenant';
 import ColorTubeLoader from '../../../components/Style/ColorTubeLoader';
+import { AgreementCancellationBanner, AgreementCancelButton } from '../AgreementCancellationSection';
 
 
 
@@ -58,6 +59,13 @@ export default function HouseAgrTemplate({updateAgreement,mainDetails,formData, 
       <Heading as="h1" size="xl" mb={6} textAlign="center">
        House Rental Agreement
       </Heading>
+      {mainDetails && (
+        <AgreementCancellationBanner
+          agreement={mainDetails}
+          currentUserId={user?._id}
+          onUpdated={() => window.location.reload()}
+        />
+      )}
       <VStack spacing={4} align="start" fontSize="sm">
         <form onSubmit={saveAgreement}>
         <Text>
@@ -290,6 +298,15 @@ export default function HouseAgrTemplate({updateAgreement,mainDetails,formData, 
                          <Button   bg={'black'}  onClick={ ()=> {console.log("clicked"); sendAggrToRenter()}} color={'white'}>Send Agreement To Renter</Button>
                         
                          
+                     )
+                 }
+                 {
+                     checkCreateAgrr && mainDetails && (
+                         <AgreementCancelButton
+                             agreement={mainDetails}
+                             currentUserId={user?._id}
+                             onUpdated={() => window.location.reload()}
+                         />
                      )
                  }
                  {

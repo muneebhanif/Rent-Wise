@@ -16,6 +16,7 @@ import { useAuth } from '../../../hooks/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import SendToTenant from '../SendToTenant';
 import ColorTubeLoader from '../../../components/Style/ColorTubeLoader';
+import { AgreementCancellationBanner, AgreementCancelButton } from '../AgreementCancellationSection';
 
 
 export default function CarAgrTemplate({updateAgreement,mainDetails,formData, handleChange, saveAgreement,tenant
@@ -56,6 +57,13 @@ export default function CarAgrTemplate({updateAgreement,mainDetails,formData, ha
       <Heading as="h1" size="xl" mb={6} textAlign="center">
         Car Rental Agreement
       </Heading>
+      {mainDetails && (
+        <AgreementCancellationBanner
+          agreement={mainDetails}
+          currentUserId={user?._id}
+          onUpdated={() => window.location.reload()}
+        />
+      )}
       <VStack spacing={4} align="start" fontSize="sm">
         <form  onSubmit={saveAgreement}>
         <Text>
@@ -339,6 +347,15 @@ export default function CarAgrTemplate({updateAgreement,mainDetails,formData, ha
             checkCreateAgrr && ownerConfirmed && (
                 <Button onClick={sendAggrToRenter}  bg={'black'} color={'white'}>Send Agreement To Renter</Button>
                 
+            )
+        }
+        {
+            checkCreateAgrr && mainDetails && (
+                <AgreementCancelButton
+                    agreement={mainDetails}
+                    currentUserId={user?._id}
+                    onUpdated={() => window.location.reload()}
+                />
             )
         }
          {

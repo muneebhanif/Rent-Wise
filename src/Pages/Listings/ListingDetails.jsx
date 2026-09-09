@@ -525,13 +525,13 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 {/* owner ki profile */}
                 <Flex alignItems={"center"} flexDir={'column'} gap={2}>
                   <Button
-                    isDisabled={currentListing?.rentalState !== "available"}
+                    isDisabled={currentListing?.rentalState === "rented"}
                     onClick={handleChatButtonClick}
                     leftIcon={<MessageCircleIcon size={20} />}
                     variant={"customButton"}
                     w="full"
                   >
-                    {currentListing?.rentalState === "available" ? "Chat with Owner" : "Currently unavailable"}
+                    {currentListing?.rentalState === "rented" ? "Currently Rented" : "Chat with Owner"}
                   </Button>
 
                   <Button

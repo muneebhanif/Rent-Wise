@@ -5,13 +5,14 @@ import { CheckCircle2, Clock3, LockKeyhole } from 'lucide-react';
 const status = {
   available: { label: 'Available', color: 'green', icon: CheckCircle2 },
   rented: { label: 'Rented', color: 'red', icon: LockKeyhole },
-  pending: { label: 'Reserved', color: 'orange', icon: Clock3 },
-  upcoming: { label: 'Reserved', color: 'blue', icon: Clock3 },
+  pending: { label: 'Agreement Pending', color: 'orange', icon: Clock3 },
+  upcoming: { label: 'Rented', color: 'red', icon: LockKeyhole },
+  cancellation_requested: { label: 'Rented', color: 'red', icon: LockKeyhole },
 };
 
 export default function ListingStatusBadge({ state, showAvailable = false, ...positionProps }) {
   const details = status[state];
-  if (!details || (state === 'available' && !showAvailable)) return null;
+  if (!details || ((state === 'available' || state === 'pending') && !showAvailable)) return null;
   const Icon = details.icon;
 
   return (

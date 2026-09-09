@@ -3,9 +3,14 @@ import { PackageOpen, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const states = {
-  available: { label: 'Available', color: 'green' }, rented: { label: 'Rented', color: 'teal' },
-  pending: { label: 'Agreement pending', color: 'orange' }, upcoming: { label: 'Upcoming', color: 'blue' },
-  completed: { label: 'Completed', color: 'gray' }, rejected: { label: 'Not accepted', color: 'red' },
+  available: { label: 'Available', color: 'green' },
+  rented: { label: 'Rented', color: 'teal' },
+  pending: { label: 'Agreement pending', color: 'orange' },
+  upcoming: { label: 'Rented (Upcoming)', color: 'blue' },
+  cancellation_requested: { label: 'Cancellation requested', color: 'red' },
+  cancelled: { label: 'Cancelled', color: 'gray' },
+  completed: { label: 'Completed', color: 'gray' },
+  rejected: { label: 'Not accepted', color: 'red' },
   unpublished: { label: 'Unpublished', color: 'gray' },
 };
 export const agreementPath = (agreement, owner = false) => {
