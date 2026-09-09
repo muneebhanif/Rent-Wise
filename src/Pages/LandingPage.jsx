@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useCallback, useContext, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -12,14 +12,9 @@ import {
   Input,
   Image,
   Stack,
-  Skeleton,
 } from "@chakra-ui/react";
 import {
-  FaBuilding,
-  FaCar,
-  FaHotel,
   FaSearch,
-  FaStar,
   FaArrowRight,
 } from "react-icons/fa";
 import { getAllListingAPI } from "../Api/ListingApi";
@@ -29,12 +24,13 @@ import {
   GetSubscriptionNotification,
   // UpdateSubscription,
 } from "../Api/DashboardAPI";
-import AnimatedBackground from "./Animated";
 import { categories } from "./Listings/Test/staticData";
 import { ListingsContext } from "../hooks/ListingsContext";
 import { useAuth } from "../hooks/AuthContext";
-import { NotificationContext } from "../hooks/NotificationContext";
 import Loader from "../components/Style/Loader";
+import ListingStatusBadge from "../components/ListingStatusBadge";
+
+const rentOptions = ["Cars", "Houses", "hostel"];
 
 // import NotificationButton from "./Notifications/NotificationButton";
 
@@ -53,8 +49,7 @@ const LandingPage = () => {
   });
   const itemsPerPage = 6; // Number of listings per page
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasSubscription, setHasSubscription] = useState(null);
-  const { notifications } = useContext(NotificationContext);
+  const [, setHasSubscription] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const mediaUrl = (url) => url && /^https?:\/\//i.test(url)
     ? url
@@ -97,6 +92,21 @@ const LandingPage = () => {
     window.history.replaceState(null, '', `${window.location.pathname}#featured`);
   };
   
+  const subscribeToPush = useCallback(async () => {
+    if (!user) return;
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: `${import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY}`,
+      });
+      const response = await SetSubscriptionNotification({ subscription });
+      if (response.data?.success) alert("Push Notifications Enabled!");
+    } catch (error) {
+      console.error("Push Subscription Error:", error);
+    }
+  }, [user]);
+
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
@@ -157,40 +167,16 @@ const LandingPage = () => {
     };
 
     fetchNotificationSetting();
-  }, [user, checkAlert]);
-
-  const subscribeToPush = async () => {
-    if (!user) return;
-
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: `${import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY}`,
-      });
-
-
-      const response = await SetSubscriptionNotification({ subscription });
-
-      if (response.data?.success) {
-        alert("Push Notifications Enabled!");
-      }
-    } catch (error) {
-      console.error("Push Subscription Error:", error);
-    }
-  }; 
+  }, [user, checkAlert, subscribeToPush]);
 
 // In your component:
 const [displayText, setDisplayText] = useState("Cars");
-const [width, setWidth] = useState("4ch"); // Initial width for "Cars"
-const rentOptions = ["Cars", "Houses", "hostel"];
 
 useEffect(() => {
   let currentIndex = 0;
   const interval = setInterval(() => {
     currentIndex = (currentIndex + 1) % rentOptions.length;
     setDisplayText(rentOptions[currentIndex]);
-    setWidth(`${rentOptions[currentIndex].length}ch`); // Dynamic width
   }, 4000);
 
   return () => clearInterval(interval);
@@ -421,6 +407,7 @@ useEffect(() => {
               paginatedListings.map((rental) => (
                 <GridItem
                   key={rental._id}
+                  position="relative"
                   bg="white"
                   rounded="2xl"
                   shadow="0 12px 35px rgba(37, 24, 12, 0.10)"
@@ -428,6 +415,7 @@ useEffect(() => {
                   borderColor="orange.100"
                   overflow="hidden"
                 >
+                  <ListingStatusBadge state={rental.rentalState} position="absolute" top={4} left={4} />
                   {rental.images && rental.images.length > 0 ? (
                     <Image
                       src={mediaUrl(rental?.images[0]?.url)}
@@ -531,7 +519,7 @@ useEffect(() => {
         </Container>
       </Box>
 
-      <style jsx="true">{`
+      <style>{`
         @keyframes slide {
           0% {
             opacity: 0;

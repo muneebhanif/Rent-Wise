@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getAllHouse } from '../../../Api/Home';
-import { Box, Card, CardFooter, CardHeader, Heading, Input,Button, Flex, Text, SimpleGrid, Checkbox,Skeleton,Stack,Slider, SliderTrack, SliderFilledTrack, SliderThumb, } from '@chakra-ui/react';
-import { Bath, BedDouble, CircleDollarSign, DollarSign, MapPin } from 'lucide-react';
+import { Box, Card, CardFooter, Heading, Input,Button, Flex, Text, SimpleGrid, Checkbox,Slider, SliderTrack, SliderFilledTrack, SliderThumb, } from '@chakra-ui/react';
+import { Bath, BedDouble, CircleDollarSign, MapPin } from 'lucide-react';
 import {Link} from 'react-router-dom'
 import Loader from '../../../components/Style/Loader';
 import CategoryFilterPanel from '../../../components/CategoryFilterPanel';
 import { useAuth } from '../../../hooks/AuthContext';
 import { formatPrice } from '../../../utils/formatPrice';
+import ListingStatusBadge from '../../../components/ListingStatusBadge';
 const mediaUrl = (url) => url && /^https?:\/\//i.test(url) ? url : url ? `${import.meta.env.VITE_BACK_END_URL}${url}` : '/images/make_listing/random.png';
 
 export default function HouseListing() {
   const { user } = useAuth();
-  const [priceRange, setPriceRange] = useState([0, 1500000])
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000000);
    const [houseData, setHouseData] = useState([]);
@@ -236,7 +236,8 @@ export default function HouseListing() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           
             {filteredListings.map(house => (
-              <Card key={house._id} className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 bg-white">
+              <Card key={house._id} position="relative" className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 bg-white">
+                <ListingStatusBadge state={house.rentalState} position="absolute" top={3} left={3} />
                 {
                   house?.images?.length > 0 ? (
                     <img  src={

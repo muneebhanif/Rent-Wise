@@ -57,6 +57,7 @@ import ColorTubeLoader from "../../components/Style/ColorTubeLoader";
 import BiddingSystem from "./BiddingSystem";
 import DisplayLocation from "../Location/DisplayLocation";
 import { formatPrice } from "../../utils/formatPrice";
+import ListingStatusBadge from "../../components/ListingStatusBadge";
 
 const baseUrl = import.meta.env.VITE_BACK_END_URL;
 const mediaUrl = (url) => {
@@ -238,6 +239,7 @@ useEffect(() => { console.log(selectedMedia)}, [selectedMedia]);
                 {currentListing?.title}
               </Heading>
               <Flex  gap={4} flexDir={{base:'column', sm:'row'}}>
+                <ListingStatusBadge state={currentListing?.rentalState} showAvailable alignSelf="flex-start" />
                 <Badge colorScheme="orange" px={3} py={1} fontSize="m" w={'fit-content'}>
                   {formatPrice(currentListing?.price)} PKR/{currentListing?.priceUnit}
                 </Badge>
